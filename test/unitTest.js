@@ -46,3 +46,24 @@ describe('Can parse from database correctly', function() {
         assert.equal(clientFunction.retrieve('word_a_of_in_and_it'), 'Word A Of In And It');
     });
 });
+
+describe('Can handle date formats correctly', function() {
+    let aDate = new Date();
+    let dateString = (aDate.getMonth() +1) + "-" + aDate.getDate() + "-" + aDate.getFullYear();
+    it('should work with today\s date', function() {
+        assert.equal(clientFunction.makeDate(), dateString);
+    });
+
+    it('should have leading zeros for month and day', function() {
+        assert.equal(clientFunction.formatDate(new Date(2018, 3, 6)), '04-06-2018');
+    });
+
+    it('should return proper milliseconds', function() {
+        assert.equal(clientFunction.dateMillis(new Date(2018, 10, 20)), 1542690000000);
+    });
+
+    it('should return proper milliseconds 2', function() {
+        assert.equal(clientFunction.dateMillis(aDate), aDate.getTime());
+    });
+
+});
