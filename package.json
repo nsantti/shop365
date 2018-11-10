@@ -4,7 +4,6 @@
   "description": "Shopping list application for CS-365 Final Project",
   "main": "server.js",
   "scripts": {
-    "test": "mocha",
     "start": "nodemon server.js"
   },
   "repository": {
