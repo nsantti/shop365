@@ -1,0 +1,42 @@
+/* div {
+    border: 1px solid black;
+} */
+
+body {
+    background-color: #336B87;
+    font-family: "Verdana", Times, serif;
+}
+
+#content {
+    width: 66%;
+    margin-right: auto;
+    margin-left: auto;
+    background-color: #90AFC5;
+    height: 800px;
+    border: 1px solid black;
+}
+
+#header {
+    text-align: center;
+    font-size: 30px;  
+    padding: 2px;
+}
+
+#left-header {
+    width: 33%;
+    float: left;
+    font-size: 22px;
+    margin-top: 10px;
+}
+
+#center-header {
+    width: 33%;
+    float: left;
+}
+
+#right-header {
+    width: 33%;
+    float: left;
+    font-size: 22px;
+    margin-top: 10px;
+}
