@@ -4,6 +4,10 @@
   "description": "Shopping list application for CS-365 Final Project",
   "main": "server.js",
   "scripts": {
+<<<<<<< HEAD
+=======
+    "test": "mocha",
+>>>>>>> master
     "start": "nodemon server.js"
   },
   "repository": {
@@ -19,7 +23,11 @@
   "dependencies": {
     "express": "^4.16.4",
 <<<<<<< HEAD
+<<<<<<< HEAD
     "mongodb": "^3.1.9",
+=======
+    "mocha": "^5.2.0",
+>>>>>>> master
     "nodemon": "^1.18.5",
     "socket.io": "^2.1.1"
   }
