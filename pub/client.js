@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 var socket = io();
-=======
-=======
->>>>>>> master
 // Takes a word, returns a string all lowercase separated by underscores
 function cleanString(str) {
    return str.split(' ').filter(item => item.length > 0).map(word => word.toLowerCase()).join('_');
@@ -21,9 +17,5 @@ function capitalizeFirst(word) {
 }
 
 exports.cleanString = cleanString;
-<<<<<<< HEAD
 exports.retrieve = retrieve;
->>>>>>> master
-=======
 exports.retrieve = retrieve;
->>>>>>> master
