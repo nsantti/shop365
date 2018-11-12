@@ -15,16 +15,45 @@
 
 <body>
     <div id="content">
-        <div id="header">
-            <div id="left-header">
-                Group: asdvcda
+        <div id="mainView">
+            <div id="header">
+                <div id="left-header">
+                    Group: asdvcda
+                </div>
+                <div id="center-header">
+                    Shop 365
+                </div>
+                <div id="right-header">
+                    mm/dd/yyyy
+                </div>
             </div>
-            <div id="center-header">
-                Shop 365
+            <div id="item-form">
+                <div id="form-header">
+                    <button type="button" id="addItemButton" class="styledButton">
+                        Add new item...
+                    </button>
+                </div>
             </div>
-            <div id="right-header">
-                mm/dd/yyyy
+            <div id="footer">
+                <button type="button" id="removeAllButton" class="styledButton">
+                    Remove all purchased items
+                </button>
             </div>
+        </div>
+
+        
+        <div id="addItemModal">
+            <h1>Add Item</h1>
+            Item Name: <input type="text" name="addItemName" id="modalItemName">
+            <br><br>
+            Quantity: <input type="number" name="addItemQuantity" id="modalItemQuantity" min="1" value="1">
+            <br><br>
+            Comments (optional): <input type="text" name="addItemComment" id="modalItemComment">
+            <br><br>
+            Priority: <input type="checkbox" name="addItemPriority" id="modalItemPriority">
+            <br><br>
+            <button type="button" id="addItemCancel">Cancel</button>
+            <input type="submit" name="addItemSubmit" id="modalItemSubmit" value="Submit">
         </div>
     </div>
 </body>
