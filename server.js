@@ -22,11 +22,30 @@ var io = socketio(server);
 
 app.use(express.static("pub"));
 
+io.on("connection", function(socket) {
+	console.log("Somebody connected...");
+
+	socket.on("getAllItems", function() {
+		db.collection("items").find({}).toArray(function(err, docs) {
+			if (err!=null) {
+				console.log("ERROR: " + err);
+			}
+			else {
+				socket.emit("getItemList", docs);
+			}
+		});
+	});
+
+	socket.on("disconnect", function() {
+		console.log("Somebody disconnected.");
+	});
+});
+
 
 function findAll(collection) {
 	db.collection(collection).find({}).toArray(function(err, result) {
 		if(err) throw err;
-		console.log(result);
+		//console.log(result);
 		client.close();
 	});
 }
@@ -34,7 +53,7 @@ function findAll(collection) {
 function insertNewItem(collection, objToInsert) {
 	db.collection(collection).insertOne(objToInsert, function(err,res) {
 		if (err) throw err;
-		console.log("1 item inserted");
+		//console.log("1 item inserted");
 		client.close();
 	})
 }
@@ -45,9 +64,9 @@ client.connect(function(err) {
 	else {
 		db = client.db("shop365");
 
-		findAll("items");
+		//findAll("items");
 
-		var newItem = {
+		/*var newItem = {
 			name: "toothpaste",
 			priority: false,
 			groupid: "test_group",
@@ -60,17 +79,17 @@ client.connect(function(err) {
 		//insertNewItem("items",newItem);
 		//findAll("items");
 
-		console.log("Here are the groups")
+		//console.log("Here are the groups")*/
 
-		db.collection("items").distinct('groupid', function(err, result) {
+		/*db.collection("items").distinct('groupid', function(err, result) {
 			if(err) throw err;
 			groups = result;
-			console.log(groups);
+			//console.log(groups);
 			client.close();
-		});
+		});*/
 
 
-		app.listen(80, function() {
+		server.listen(80, function() {
 			console.log("Server with socket.io is ready.");
 		});
 	}
