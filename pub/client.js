@@ -1,3 +1,7 @@
+
+var socket = io();
+
+
 // Takes a word, returns a string all lowercase separated by underscores
 function cleanString(str) {
    return str.split(' ').filter(item => item.length > 0).map(word => word.toLowerCase()).join('_');
@@ -13,6 +17,19 @@ function retrieve(str) {
 function capitalizeFirst(word) {
    return word[0].toUpperCase() + word.substring(1);
 }
+
+
+
+
+socket.on("getItemList", function(items) {
+    console.log(items);
+});
+
+function startItAll() {
+    socket.emit("getAllItems");
+}
+
+startItAll();
 
 function makeDate() {
     return formatDate(new Date());
@@ -39,3 +56,4 @@ exports.retrieve = retrieve;
 exports.makeDate = makeDate;
 exports.formatDate = formatDate;
 exports.dateMillis = dateMillis;
+

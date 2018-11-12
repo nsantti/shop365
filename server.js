@@ -1,18 +1,97 @@
 
-//This is JavaScript's version of an "include" or "import":
+/*MongoDB Setup*/
+var mongodb = require("mongodb");
+var MongoClient = mongodb.MongoClient;
+var ObjectID = mongodb.ObjectID;
+var client = new MongoClient("mongodb://localhost:27017", { useNewUrlParser: true });
+var db;
+
+var groups = [];
+
 var express = require("express");
 
-//get an instance of express
-var server = express();
+var app = express();
 
-//serve up any files in the pub folder, relative to the current folder (.html files, .jpg files, .txt., etc.)
-server.use(express.static("pub")); 
+var http = require("http");
 
-//Boilerplate to get variables passed from client to server with the syntax "req.body.whateverVariable"
-var bodyParser = require("body-parser");
-server.use(bodyParser.urlencoded({extended: true}));
+var server = http.Server(app);
 
+var socketio = require("socket.io");
 
-server.listen(80, function() { //port 80 is for HTTP
-    console.log("Server is waiting on port 80."); //This message is printed once the server is ready.
+var io = socketio(server);
+
+app.use(express.static("pub"));
+
+io.on("connection", function(socket) {
+	console.log("Somebody connected...");
+
+	socket.on("getAllItems", function() {
+		db.collection("items").find({}).toArray(function(err, docs) {
+			if (err!=null) {
+				console.log("ERROR: " + err);
+			}
+			else {
+				socket.emit("getItemList", docs);
+			}
+		});
+	});
+
+	socket.on("disconnect", function() {
+		console.log("Somebody disconnected.");
+	});
 });
+
+
+function findAll(collection) {
+	db.collection(collection).find({}).toArray(function(err, result) {
+		if(err) throw err;
+		//console.log(result);
+		client.close();
+	});
+}
+
+function insertNewItem(collection, objToInsert) {
+	db.collection(collection).insertOne(objToInsert, function(err,res) {
+		if (err) throw err;
+		//console.log("1 item inserted");
+		client.close();
+	})
+}
+
+
+client.connect(function(err) {
+	if (err != null) throw err;
+	else {
+		db = client.db("shop365");
+
+		//findAll("items");
+
+		/*var newItem = {
+			name: "toothpaste",
+			priority: false,
+			groupid: "test_group",
+			date: Date(),
+			quantity: 1,
+			purchased: false,
+			comments: "No rush on this!"
+		};
+
+		//insertNewItem("items",newItem);
+		//findAll("items");
+
+		//console.log("Here are the groups")*/
+
+		/*db.collection("items").distinct('groupid', function(err, result) {
+			if(err) throw err;
+			groups = result;
+			//console.log(groups);
+			client.close();
+		});*/
+
+
+		server.listen(80, function() {
+			console.log("Server with socket.io is ready.");
+		});
+	}
+});
+
