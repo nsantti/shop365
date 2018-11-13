@@ -67,3 +67,41 @@ describe('Can handle date formats correctly', function() {
     });
 
 });
+
+describe('Validates field input correctly', function() {
+    it('should not allow negative numbers', function() {
+        assert.equal(clientFunction.validateQuantity(-1), false);
+    });
+
+    it('should not words', function() {
+        assert.equal(clientFunction.validateQuantity('1abd'), false);
+    });
+
+    it('should allow regular numbers as string', function() {
+        assert.equal(clientFunction.validateQuantity('19'), true);
+    });
+
+    it('should allow regular numbers as integer', function() {
+        assert.equal(clientFunction.validateQuantity(19), true);
+    });
+
+    it('should not allow decimals', function() {
+        assert.equal(clientFunction.validateQuantity('543.678'), false);
+    });
+
+    it('should not allow a blank name', function() {
+        assert.equal(clientFunction.validateName(''), false);
+    });
+
+    it('should not allow a name with only spaces', function() {
+        assert.equal(clientFunction.validateName('         '), false);
+    });
+
+    it('should allow a name with characters', function() {
+        assert.equal(clientFunction.validateName('cherrios'), true);
+    });
+
+    it('should allow a name with numbers in it', function() {
+        assert.equal(clientFunction.validateName('  3 eggs '), true);
+    });
+});
