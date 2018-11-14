@@ -39,6 +39,10 @@ io.on("connection", function(socket) {
 	socket.on("disconnect", function() {
 		console.log("Somebody disconnected.");
 	});
+	
+	socket.on("receiveItemFromClient", function(name, quantity, comment, priority) {
+		io.emit("displayItemFromServer", name, quantity, comment, priority);
+	});
 });
 
 
