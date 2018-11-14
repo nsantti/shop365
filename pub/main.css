@@ -2,13 +2,50 @@
     border: 1px solid black;
 } */
 
-table {
-    width: 100%;
-}
-
 body {
     background-color: #336B87;
     font-family: "Verdana", Times, serif;
+}
+
+#the-table {
+    border: 1px solid black;
+    width: 100%;
+}
+
+#the-table th {
+    box-sizing: border-box;
+    padding: 5px;
+}
+
+
+#table-priority {
+    width: 10%;
+}
+
+#table-name {
+    width: 30%;
+}
+
+#table-quantity {
+    width: 10%;
+}
+
+#table-comments {
+    width: 40%;
+}
+
+#table-extra {
+    width: 10%;
+}
+
+#more-button {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.table-item {
+    text-align: center;
+    border: 3px solid black;
 }
 
 #content {
