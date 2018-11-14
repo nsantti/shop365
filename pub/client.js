@@ -39,18 +39,20 @@ function dateMillis(date) {
 }
 
 
+
 socket.on("updateItemList", function(items) {
+    $("#groupID").text(retrieve(items[0].groupid));
 
-    let s;
-    for(s of items) {
-        var h = $("<tr><td><input type='checkbox'/></td><td>"+retrieve(s.name)+"</td><td>"+s.quantity+"</td><td><input type='button' value='Show Comments'/></td><td><input type='button' value='Menu'/></td></tr>");
-
+    let i;
+    for(i of items) {
+        var h = $("<tr><td><input type='checkbox'/></td><td>"+retrieve(i.name)+"</td><td>"+i.quantity+"</td><td><input type='button' value='Show Comments'/></td><td><input type='button' value='Menu'/></td></tr>");
 		$("#itemList").append(h);
     }
     console.log(items);
 });
 
 function startItAll() {
+
     socket.emit("getGroupItems");
 }
 
