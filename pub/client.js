@@ -18,19 +18,6 @@ function capitalizeFirst(word) {
    return word[0].toUpperCase() + word.substring(1);
 }
 
-
-
-
-socket.on("getItemList", function(items) {
-    console.log(items);
-});
-
-function startItAll() {
-    socket.emit("getAllItems");
-}
-
-startItAll();
-
 function makeDate() {
     return formatDate(new Date());
 }
@@ -50,6 +37,25 @@ function formatDate(date) {
 function dateMillis(date) {
     return date.getTime();
 }
+
+
+socket.on("updateItemList", function(items) {
+
+    let s;
+    for(s of items) {
+        var h = $("<tr><td><input type='checkbox'/></td><td>"+retrieve(s.name)+"</td><td>"+s.quantity+"</td><td><input type='button' value='Show Comments'/></td><td><input type='button' value='Menu'/></td></tr>");
+
+		$("#itemList").append(h);
+    }
+    console.log(items);
+});
+
+function startItAll() {
+    socket.emit("getGroupItems");
+}
+
+startItAll();
+
 
 exports.cleanString = cleanString;
 exports.retrieve = retrieve;
