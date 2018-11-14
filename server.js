@@ -25,13 +25,13 @@ app.use(express.static("pub"));
 io.on("connection", function(socket) {
 	console.log("Somebody connected...");
 
-	socket.on("getAllItems", function() {
+	socket.on("getGroupItems", function() {
 		db.collection("items").find({}).toArray(function(err, docs) {
 			if (err!=null) {
 				console.log("ERROR: " + err);
 			}
 			else {
-				socket.emit("getItemList", docs);
+				socket.emit("updateItemList", docs);
 			}
 		});
 	});
