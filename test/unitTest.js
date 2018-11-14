@@ -95,6 +95,7 @@ describe('Validates field input correctly', function() {
 
     it('should not allow a name with only spaces', function() {
         assert.equal(clientFunction.validateName('         '), false);
+        assert.equal(clientFunction.validateName('     \t \n \r    '), false);
     });
 
     it('should allow a name with characters', function() {
