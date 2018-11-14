@@ -43,12 +43,15 @@ function dateMillis(date) {
 socket.on("updateItemList", function(items) {
     $("#groupID").text(retrieve(items[0].groupid));
 
+    let d = new Date();
+    $("#date").text(formatDate(d));
+
     let i;
     for(i of items) {
-        var h = $("<tr><td><input type='checkbox'/></td><td>"+retrieve(i.name)+"</td><td>"+i.quantity+"</td><td><input type='button' value='Show Comments'/></td><td><input type='button' value='Menu'/></td></tr>");
+        var h = $("<tr><td><input type='checkbox'/></td><td>"+retrieve(i.name)+"</td><td>"+i.quantity+"</td><td><input type='button' id='comments' value='Show Comments'/></td><td><input type='button' value='Menu'/></td></tr>");
 		$("#itemList").append(h);
     }
-    console.log(items);
+    //console.log(items);
 });
 
 function startItAll() {
