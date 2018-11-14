@@ -1,0 +1,123 @@
+/* div {
+    border: 1px solid black;
+} */
+
+table {
+    width: 100%;
+}
+
+body {
+    background-color: #336B87;
+    font-family: "Verdana", Times, serif;
+}
+
+#content {
+    width: 66%;
+    margin-right: auto;
+    margin-left: auto;
+    background-color: #90AFC5;
+    height: 800px;
+    border: 1px solid black;
+    margin-bottom: 100px;
+}
+
+#header {
+    text-align: center;
+    font-size: 30px;  
+    padding: 2px;
+}
+
+#left-header {
+    width: 33%;
+    float: left;
+    font-size: 22px;
+    margin-top: 10px;
+}
+
+#center-header {
+    width: 33%;
+    float: left;
+}
+
+#right-header {
+    width: 33%;
+    float: left;
+    font-size: 22px;
+    margin-top: 10px;
+}
+
+#item-form {
+    border: 1px solid brown;
+    clear: both;
+    margin-top: 100px;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    height: 500px;
+}
+
+#form-header {
+    text-align: center;
+    border: 1px solid black;
+    padding: 8px;
+}
+
+#footer button {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5px;
+}
+
+#footer {
+    text-align: center;
+}
+/* Generated with: https://www.bestcssbuttongenerator.com/#/7 */
+.styledButton {
+    -moz-box-shadow:inset 0px -3px 7px 0px #29bbff;
+	-webkit-box-shadow:inset 0px -3px 7px 0px #29bbff;
+	box-shadow:inset 0px -3px 7px 0px #29bbff;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #2dabf9), color-stop(1, #0688fa));
+	background:-moz-linear-gradient(top, #2dabf9 5%, #0688fa 100%);
+	background:-webkit-linear-gradient(top, #2dabf9 5%, #0688fa 100%);
+	background:-o-linear-gradient(top, #2dabf9 5%, #0688fa 100%);
+	background:-ms-linear-gradient(top, #2dabf9 5%, #0688fa 100%);
+	background:linear-gradient(to bottom, #2dabf9 5%, #0688fa 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#2dabf9', endColorstr='#0688fa',GradientType=0);
+	background-color:#2dabf9;
+	-moz-border-radius:3px;
+	-webkit-border-radius:3px;
+	border-radius:3px;
+	border:1px solid #0b0e07;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:15px;
+	padding:9px 23px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #263666;
+}
+
+/* Generated with https://www.bestcssbuttongenerator.com/#/7 */
+.styledButton:hover {
+    background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #0688fa), color-stop(1, #2dabf9));
+	background:-moz-linear-gradient(top, #0688fa 5%, #2dabf9 100%);
+	background:-webkit-linear-gradient(top, #0688fa 5%, #2dabf9 100%);
+	background:-o-linear-gradient(top, #0688fa 5%, #2dabf9 100%);
+	background:-ms-linear-gradient(top, #0688fa 5%, #2dabf9 100%);
+	background:linear-gradient(to bottom, #0688fa 5%, #2dabf9 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#0688fa', endColorstr='#2dabf9',GradientType=0);
+	background-color:#0688fa;
+}
+
+#addItemModal {
+    text-align: center;
+    border: 1px solid black;
+    padding: 8px;
+    display: visible;
+}
+
+#mainView {
+    display: visible;
+}
