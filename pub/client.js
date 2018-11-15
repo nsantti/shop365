@@ -1,17 +1,58 @@
 
 var socket = io();
 
-socket.on("displayItemFromServer", function (name, quantity, comment, priority) {
+var group = "test_group";
+
+/*socket.on("displayItemFromServer", function (name, quantity, comment, priority) {
     console.log("NAME: " + name + "\nQUANTITY: " + quantity + "\nCOMMENT: " + comment + "\nPRIORITY: " + priority);
+});*/
+
+socket.on("updateItemList", function(items) {
+    $("#table-body").html("");
+
+    //$("#groupID").text(retrieve(items[0].groupid));
+
+    $("#groupID").text(retrieve(group));
+
+    let d = new Date();
+    $("#date").text(formatDate(d));
+
+    var i;
+    for(i of items) {
+        let t = i;
+        var h = $("<tr class='table-item'><td></td><td>"+retrieve(i.name)+"</td><td>"+i.quantity+"</td><td>"+i.comments+"</td><td></td></tr>");
+        
+        var pb = $("<button class='priority-button' type='button'>"+i.priority+"</button>");
+        var mb = $("<button class='more-button' type='button'>More</button><div id='"+t._id+"'class='more-button-content'>Dropdown Content</div>");
+
+
+       pb.click(function() {
+            $("#table-body tr").remove();
+            socket.emit("togglePriority", t._id, t.priority);
+            //socket.emit("getGroupItems");
+            console.log(t.name + " " + t.priority);
+        });
+        
+        /*mb.hover(function() {
+            $("#"+t._id).show();
+		});
+
+        $("#"+t._id).hover(function() {
+            $("#"+t._id).show();
+        });*/
+        
+        $(h.children()[0]).append(pb);
+        $(h.children()[4]).append(mb);
+        
+        $("#table-body").append(h);
+    }
+
+
 });
 
-socket.on("getItemList", function (items) {
-    console.log(items);
-});
 
 function startItAll() {
-    socket.emit("getAllItems");
-    socket.emit("getGroupItems");
+    //socket.emit("getAllItems");
 
     $("#addItemModal").hide();
 
@@ -25,6 +66,8 @@ function startItAll() {
         $("#addItemModal").hide();
     });
 
+
+
     //Ryan TODO: validate input before sending to server
     $("#modalItemSubmit").click(function () {
         $("#mainView").show();
@@ -37,16 +80,21 @@ function startItAll() {
         }
         else {
             socket.emit("receiveItemFromClient",
+                group,
                 $("#modalItemName").val(),
                 $("#modalItemQuantity").val(),
                 $("#modalItemComment").val(),
-                $("#modalItemPriority").val()
+                $("#modalItemPriority").is(':checked')
             );
+            $("#table-body tr").remove();
         }
     });
+
+    socket.emit("getGroupItems");
 }
 
 $(startItAll);
+
 
 function validateName(name) {
     return (name.replace(/\s/g, '').length > 0); //Return true if not empty string or not all whitespace
@@ -99,19 +147,12 @@ function dateMillis(date) {
     return date.getTime();
 }
 
-socket.on("updateItemList", function(items) {
-    $("#groupID").text(retrieve(items[0].groupid));
-
-    let d = new Date();
-    $("#date").text(formatDate(d));
-
-    let i;
-    for(i of items) {
-        var h = $("<tr><td><input type='checkbox'/></td><td>"+retrieve(i.name)+"</td><td>"+i.quantity+"</td><td><input type='button' id='comments' value='Show Comments'/></td><td><input type='button' value='Menu'/></td></tr>");
-		$("#itemList").append(h);
+function fixComment(comment) {
+    if(typeof(comment) === 'undefined') {
+        return "";
     }
-    //console.log(items);
-});
+}
+
 
 exports.cleanString = cleanString;
 exports.retrieve = retrieve;

@@ -38,7 +38,38 @@ body {
     width: 10%;
 }
 
-#more-button {
+.more-button {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.more-button-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 160px;
+}
+
+.more-button-content {
+    padding: 3px;
+}
+
+.more-button:hover .more-button-content {
+    display: block;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.priority-button {
     margin-left: auto;
     margin-right: auto;
 }
@@ -46,6 +77,10 @@ body {
 .table-item {
     text-align: center;
     border: 3px solid black;
+}
+
+.table-item:hover {
+    background-color: lightblue;
 }
 
 #content {
