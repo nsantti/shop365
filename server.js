@@ -25,21 +25,26 @@ app.use(express.static("pub"));
 io.on("connection", function(socket) {
 	console.log("Somebody connected...");
 
-	socket.on("getAllItems", function() {
+	socket.on("getGroupItems", function() {
 		db.collection("items").find({}).toArray(function(err, docs) {
 			if (err!=null) {
 				console.log("ERROR: " + err);
 			}
 			else {
-				socket.emit("getItemList", docs);
+				socket.emit("updateItemList", docs);
 			}
 		});
 	});
 
+	socket.on("disconnect", function() {
+		console.log("Somebody disconnected.");
+	});
+	
 	socket.on("receiveItemFromClient", function(name, quantity, comment, priority) {
 		io.emit("displayItemFromServer", name, quantity, comment, priority);
 	});
 });
+
 
 function findAll(collection) {
 	db.collection(collection).find({}).toArray(function(err, result) {
