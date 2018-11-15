@@ -1,18 +1,13 @@
 
+
 var socket = io();
 
 socket.on("displayItemFromServer", function (name, quantity, comment, priority) {
     console.log("NAME: " + name + "\nQUANTITY: " + quantity + "\nCOMMENT: " + comment + "\nPRIORITY: " + priority);
 });
 
-socket.on("getItemList", function (items) {
-    console.log(items);
-});
-
 function startItAll() {
     socket.emit("getAllItems");
-    socket.emit("getGroupItems");
-
     $("#addItemModal").hide();
 
     $("#addItemButton").click(function () {
@@ -46,7 +41,18 @@ function startItAll() {
     });
 }
 
+socket.on("getItemList", function (items) {
+    console.log(items);
+});
+
 $(startItAll);
+
+
+
+// Takes a word, returns a string all lowercase separated by underscores
+function cleanString(str) {
+    return str.split(' ').filter(item => item.length > 0).map(word => word.toLowerCase()).join('_');
+}
 
 function validateName(name) {
     return (name.replace(/\s/g, '').length > 0); //Return true if not empty string or not all whitespace
@@ -63,20 +69,15 @@ function validateQuantity(quantity) {
     return true;
 }
 
-// Takes a word, returns a string all lowercase separated by underscores
-function cleanString(str) {
-   return str.split(' ').filter(item => item.length > 0).map(word => word.toLowerCase()).join('_');
-}
-
 // Takes a lowercase word separated by underscores.
 // Returns a string with spaces instead of underscores, with the first
 // letter of each word capitalized
 function retrieve(str) {
-   return str.split('_').map(capitalizeFirst).join(' ');
+    return str.split('_').map(capitalizeFirst).join(' ');
 }
 
 function capitalizeFirst(word) {
-   return word[0].toUpperCase() + word.substring(1);
+    return word[0].toUpperCase() + word.substring(1);
 }
 
 function makeDate() {
@@ -99,23 +100,10 @@ function dateMillis(date) {
     return date.getTime();
 }
 
-socket.on("updateItemList", function(items) {
-    $("#groupID").text(retrieve(items[0].groupid));
-
-    let d = new Date();
-    $("#date").text(formatDate(d));
-
-    let i;
-    for(i of items) {
-        var h = $("<tr><td><input type='checkbox'/></td><td>"+retrieve(i.name)+"</td><td>"+i.quantity+"</td><td><input type='button' id='comments' value='Show Comments'/></td><td><input type='button' value='Menu'/></td></tr>");
-		$("#itemList").append(h);
-    }
-    //console.log(items);
-});
-
 exports.cleanString = cleanString;
 exports.retrieve = retrieve;
 exports.makeDate = makeDate;
 exports.formatDate = formatDate;
 exports.dateMillis = dateMillis;
-
+exports.validateName = validateName;
+exports.validateQuantity = validateQuantity;
