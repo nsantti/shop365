@@ -18,14 +18,14 @@
         <div id="mainView">
             <div id="header">
                 <div id="left-header">
-                    Group: asdvcda
+                    Group: <span id="groupID">No Group Available</span>
                     <button type="button" id="changeGroupButton" class="styledButton">Change group</button>
                 </div>
                 <div id="center-header">
                     Shop 365
                 </div>
                 <div id="right-header">
-                    mm/dd/yyyy
+                    Date: <span id="date">No Date Available</span>
                 </div>
             </div>
             <div id="item-form">
@@ -85,7 +85,7 @@
                                         </button>
                                     </div>
                                 </td>
-                            </tr>
+                            </tr>-->
                         </tbody>
                     </table>
                 </div>
@@ -128,22 +128,19 @@
                 <button type="button">Generate new group</button>
             </div>
         </div>
-
         <div id="editItemModal">
             <h1>Edit Item</h1>
-            Item Name: <input type="text" name="editItemName" id="modalEditItemName">
+            <input type="text" name="itemID" id="storeItemID" readonly>
+            Item Name: <input type="text" name="editItemName" id="editModalItemName">
             <br><br>
-            Quantity: <input type="number" name="editItemQuantity" id="modalEditItemQuantity" min="1" value="1">
+            Quantity: <input type="number" name="editItemQuantity" id="editModalItemQuantity" min="1" value="1">
             <br><br>
-            Comments (optional): <input type="text" name="editItemComment" id="modalEditItemComment">
+            Comments (optional): <input type="text" name="editItemComment" id="editModalItemComment">
             <br><br>
-            Priority: <input type="checkbox" name="editItemPriority" id="modalEditItemPriority">
+            Priority: <input type="checkbox" name="editItemPriority" id="editModalItemPriority">
             <br><br>
-            <div id="validateEditItemDiv">
-                Illegal field names detected.
-            </div>
             <button type="button" id="editItemCancel">Cancel</button>
-            <input type="submit" name="editItemSubmit" id="modalEditItemSubmit" value="Submit">
+            <input type="submit" name="editItemSubmit" id="editModalItemSubmit" value="Submit">
         </div>
     </div>
 </body>

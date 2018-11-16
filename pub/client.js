@@ -1,19 +1,82 @@
 
 var socket = io();
 
-socket.on("displayItemFromServer", function (name, quantity, comment, priority) {
+var group = "test_group";
+
+/*socket.on("displayItemFromServer", function (name, quantity, comment, priority) {
     console.log("NAME: " + name + "\nQUANTITY: " + quantity + "\nCOMMENT: " + comment + "\nPRIORITY: " + priority);
+});*/
+
+socket.on("updateItemList", function(items) {
+    $("#table-body").html("");
+
+    //$("#groupID").text(retrieve(items[0].groupid));
+
+    $("#groupID").text(retrieve(group));
+
+    $("#date").text(formatDate(new Date()));
+
+    var i;
+    for(i of items) {
+        let t = i;
+        var h = $("<tr id='"+t._id+"' class='table-item'><td></td><td class='"+t._id+"'>"+retrieve(t.name)+"</td><td class='"+t._id+"'>"+t.quantity+"</td><td class='"+t._id+"'>"+t.comments+"</td><td></td></tr>");
+        
+        var pb = $("<button class='priority-button' type='button'>"+t.priority+"</button>");
+        var editb = $("<button class='more-button' type='button'>Edit</button>");
+        var delb = $("<button class='more-button' type='button'>Delete</button>");
+
+
+       pb.click(function() {
+            socket.emit("togglePriority", t._id, t.priority);
+            console.log(t.name + " " + t.priority);
+        });
+        
+        
+        $(h.children()[0]).append(pb);
+        $(h.children()[4]).append(editb).append(delb);
+
+        editb.click(function() {
+            $("#storeItemID").val(t._id);
+            $("#editModalItemName").val(t.name);
+            $("#editModalItemQuantity").val(t.quantity);
+            $("#editModalItemComment").val(t.comments);
+            $("#mainView").hide();
+            $("#editItemModal").show();
+        });
+
+        delb.click(function() {
+            var c = confirm("Are you sure?");
+            if(c)
+                socket.emit("deleteItem", t._id);
+        });
+        
+        $("#table-body").append(h);
+
+        if(t.purchased == true) {
+            console.log("Changing background color to green");
+            $("#"+t._id).css("background-color", "#99ff66");
+        }
+        else {
+            console.log("Changing the background color to blue");
+            $("#"+t._id).css("background-color", "#90AFC5");
+        }
+
+        $("."+t._id).click(function() {
+            console.log("The item you are sending to the server is "+t.name+" and the purchased boolean is "+t.purchased);
+            socket.emit("togglePurchased", t._id, t.purchased);
+        });
+
+    }
+
+
 });
 
-socket.on("getItemList", function (items) {
-    console.log(items);
-});
 
 function startItAll() {
-    socket.emit("getAllItems");
-    socket.emit("getGroupItems");
+    //socket.emit("getAllItems");
 
     $("#addItemModal").hide();
+    $("#editItemModal").hide();
 
     $("#addItemButton").click(function () {
         $("#mainView").hide();
@@ -24,6 +87,18 @@ function startItAll() {
         $("#mainView").show();
         $("#addItemModal").hide();
     });
+
+    $("#editItemButton").click(function () {
+        $("#mainView").hide();
+        $("#editItemModal").show();
+    });
+
+    $("#editItemCancel").click(function () {
+        $("#mainView").show();
+        $("#editItemModal").hide();
+    });
+
+
 
     //Ryan TODO: validate input before sending to server
     $("#modalItemSubmit").click(function () {
@@ -37,16 +112,46 @@ function startItAll() {
         }
         else {
             socket.emit("receiveItemFromClient",
+                group,
                 $("#modalItemName").val(),
                 $("#modalItemQuantity").val(),
                 $("#modalItemComment").val(),
-                $("#modalItemPriority").val()
+                $("#modalItemPriority").is(':checked')
             );
+            $("#table-body tr").remove();
         }
     });
-}
+
+    //Ryan TODO: validate input before sending to server
+    $("#editModalItemSubmit").click(function () {
+        $("#mainView").show();
+        $("#editItemModal").hide();
+        if (!validateName($("#editModalItemName").val())) {
+            //TODO: Handle bad name input
+        }
+        else if (!validateQuantity($("#editModalItemQuantity").val())) {
+            //TODO: Handle bad quantity input
+        }
+        else {
+            console.log("It's going to send the update to ther server");
+            socket.emit("editItem",
+                $("#storeItemID").val(),
+                $("#editModalItemName").val(),
+                $("#editModalItemQuantity").val(),
+                $("#editModalItemComment").val(),
+                $("#editModalItemPriority").is(':checked')
+            );
+            $("#table-body tr").remove();
+        }
+    });
+
+
+    socket.emit("getGroupItems");
+};
+
 
 $(startItAll);
+
 
 function validateName(name) {
     return (name.replace(/\s/g, '').length > 0); //Return true if not empty string or not all whitespace
@@ -99,19 +204,12 @@ function dateMillis(date) {
     return date.getTime();
 }
 
-socket.on("updateItemList", function(items) {
-    $("#groupID").text(retrieve(items[0].groupid));
-
-    let d = new Date();
-    $("#date").text(formatDate(d));
-
-    let i;
-    for(i of items) {
-        var h = $("<tr><td><input type='checkbox'/></td><td>"+retrieve(i.name)+"</td><td>"+i.quantity+"</td><td><input type='button' id='comments' value='Show Comments'/></td><td><input type='button' value='Menu'/></td></tr>");
-		$("#itemList").append(h);
+function fixComment(comment) {
+    if(typeof(comment) === 'undefined') {
+        return "";
     }
-    //console.log(items);
-});
+}
+
 
 exports.cleanString = cleanString;
 exports.retrieve = retrieve;
