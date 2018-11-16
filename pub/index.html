@@ -128,6 +128,7 @@
                 <button type="button">Generate new group</button>
             </div>
         </div>
+
         <div id="editItemModal">
             <h1>Edit Item</h1>
             <input type="text" name="itemID" id="storeItemID" readonly>
@@ -141,6 +142,13 @@
             <br><br>
             <button type="button" id="editItemCancel">Cancel</button>
             <input type="submit" name="editItemSubmit" id="editModalItemSubmit" value="Submit">
+        </div>
+
+        <div id="confirmDeleteModal">
+            Are you sure you want to delete <span id="deleteItemName"></span>?
+            <br><br>
+            <button id="cancelDeleteItemButton">Cancel</button>
+            <button id="confirmDeleteItemButton">Yes</button>
         </div>
     </div>
 </body>
