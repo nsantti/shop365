@@ -44,10 +44,6 @@ body {
     margin-right: auto;
 }
 
-button {
-    display: inline;
-}
-
 .priority-button {
     margin-left: auto;
     margin-right: auto;
@@ -169,7 +165,7 @@ td {
     background-color: #0688fa;
 }
 
-#addItemModal, #editItemModal {
+#addItemModal {
     text-align: center;
     border: 1px solid black;
     padding: 8px;
