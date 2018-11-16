@@ -23,7 +23,8 @@ socket.on("updateItemList", function(items) {
         let t = i;
         var h = $("<tr id='"+t._id+"' class='table-item'><td></td><td class='"+t._id+"'>"+retrieve(t.name)+"</td><td class='"+t._id+"'>"+t.quantity+"</td><td class='"+t._id+"'>"+t.comments+"</td><td></td></tr>");
         var priorityButtonClass = t.priority ? 'truePriorityButton' : 'falsePriorityButton';
-        var pb = $("<button class=" + priorityButtonClass + " type='button'>"+capitalizeFirst(t.priority.toString())+"</button>");
+        var priorityText = t.priority ? "High" : "Low";
+        var pb = $("<button class=" + priorityButtonClass + " type='button'>"+priorityText+"</button>");
         var editb = $("<button class='edit-button' type='button'>Edit</button>");
         var delb = $("<button class='delete-button' type='button'>Delete</button>");
 
