@@ -163,6 +163,13 @@ td {
     display: visible;
 }
 
+#editItemModal {
+    text-align: center;
+    border: 1px solid black;
+    padding: 8px;
+    display: none;
+}
+
 #mainView {
     display: visible;
 }
@@ -176,4 +183,20 @@ td {
 
 #generateGroupButton {
     padding: 15px;
+}
+
+#validateAddItemDiv {
+    display: none;
+}
+
+#validateEditItemDiv {
+    display: none;
+}
+
+#validateGroupDiv {
+    display: none;
+}
+
+#changeGroupButton {
+    margin-top: 8px;
 }

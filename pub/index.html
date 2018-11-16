@@ -19,6 +19,7 @@
             <div id="header">
                 <div id="left-header">
                     Group: asdvcda
+                    <button type="button" id="changeGroupButton" class="styledButton">Change group</button>
                 </div>
                 <div id="center-header">
                     Shop 365
@@ -107,6 +108,9 @@
             <br><br>
             Priority: <input type="checkbox" name="addItemPriority" id="modalItemPriority">
             <br><br>
+            <div id="validateAddItemDiv">
+                Illegal field names detected.
+            </div>
             <button type="button" id="addItemCancel">Cancel</button>
             <input type="submit" name="addItemSubmit" id="modalItemSubmit" value="Submit">
         </div>
@@ -116,9 +120,30 @@
             <label for="changeGroupText">Enter Group Name:</label>
             <input type="text" id="changeGroupText">
             <input type="submit" value="GO" id="createGroupButton">
+            <div id="validateGroupDiv">
+                <br>
+                That group does not exist
+            </div>
             <div id="generateGroupButton">
                 <button type="button">Generate new group</button>
             </div>
+        </div>
+
+        <div id="editItemModal">
+            <h1>Edit Item</h1>
+            Item Name: <input type="text" name="editItemName" id="modalEditItemName">
+            <br><br>
+            Quantity: <input type="number" name="editItemQuantity" id="modalEditItemQuantity" min="1" value="1">
+            <br><br>
+            Comments (optional): <input type="text" name="editItemComment" id="modalEditItemComment">
+            <br><br>
+            Priority: <input type="checkbox" name="editItemPriority" id="modalEditItemPriority">
+            <br><br>
+            <div id="validateEditItemDiv">
+                Illegal field names detected.
+            </div>
+            <button type="button" id="editItemCancel">Cancel</button>
+            <input type="submit" name="editItemSubmit" id="modalEditItemSubmit" value="Submit">
         </div>
     </div>
 </body>
