@@ -105,6 +105,7 @@ function startItAll() {
         }
         else {
             socket.emit("receiveItemFromClient",
+                group,
                 cleanString($("#modalItemName").val()),
                 $("#modalItemQuantity").val(),
                 $("#modalItemComment").val(),
@@ -134,6 +135,17 @@ function startItAll() {
         $("#mainView").hide();
         $("#addItemModal").hide();
     });
+}
+
+function getModalItemPriority() {
+    return $("#modalItemPriority").prop('checked');
+}
+
+function clearAllInputFields() {
+    $("#modalItemName").val("");
+    $("#modalItemQuantity").val(1);
+    $("#modalItemComment").val("");
+    $("#modalItemPriority").prop('checked', false);
 }
 
 
