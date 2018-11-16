@@ -96,7 +96,22 @@
             <button type="button" id="addItemCancel">Cancel</button>
             <input type="submit" name="addItemSubmit" id="modalItemSubmit" value="Submit">
         </div>
+        <div id="editItemModal">
+            <h1>Edit Item</h1>
+            <input type="text" name="itemID" id="storeItemID" readonly>
+            Item Name: <input type="text" name="editItemName" id="editModalItemName">
+            <br><br>
+            Quantity: <input type="number" name="editItemQuantity" id="editModalItemQuantity" min="1" value="1">
+            <br><br>
+            Comments (optional): <input type="text" name="editItemComment" id="editModalItemComment">
+            <br><br>
+            Priority: <input type="checkbox" name="editItemPriority" id="editModalItemPriority">
+            <br><br>
+            <button type="button" id="editItemCancel">Cancel</button>
+            <input type="submit" name="editItemSubmit" id="editModalItemSubmit" value="Submit">
+        </div>
     </div>
+</div>
 </body>
 
 </html>

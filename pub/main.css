@@ -43,31 +43,9 @@ body {
     margin-right: auto;
 }
 
-.more-button-content {
-    display: none;
-    position: absolute;
-    background-color: white;
-    min-width: 160px;
+button {
+    display: inline;
 }
-
-.more-button-content {
-    padding: 3px;
-}
-
-.more-button:hover .more-button-content {
-    display: block;
-}
-
-
-
-
-
-
-
-
-
-
-
 
 .priority-button {
     margin-left: auto;
@@ -183,7 +161,7 @@ body {
 	background-color:#0688fa;
 }
 
-#addItemModal {
+#addItemModal, #editItemModal {
     text-align: center;
     border: 1px solid black;
     padding: 8px;

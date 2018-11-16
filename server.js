@@ -23,6 +23,7 @@ var io = socketio(server);
 app.use(express.static("pub"));
 
 function sendItemListToClient(err, res) {
+	console.log("Sending item list to client");
 	db.collection("items").find({}).toArray(function(err, docs) {
 		if (err!=null) {
 			console.log("ERROR: " + err);
@@ -49,10 +50,23 @@ io.on("connection", function(socket) {
 
 	socket.on("togglePriority", function(id, priority) {
 		console.log(oppositeBool(priority));
-		var query = {_id: new ObjectID(id)};
-		var newPriority = { $set: { priority: oppositeBool(priority)}};
-		db.collection("items").updateOne(query, newPriority, sendItemListToClient);
+		db.collection("items").updateOne({_id: ObjectID(id)}, { $set: { priority: oppositeBool(priority)}}, sendItemListToClient);
 	});
+
+	socket.on("togglePurchased", function(id, purchased) {
+		console.log("Toggling the purchased field of " + id + "and purchased should become "+ oppositeBool(purchased));
+		db.collection("items").updateOne({_id: ObjectID(id)}, { $set: { purchased: oppositeBool(purchased) }}, sendItemListToClient);
+	});
+
+	/*socket.on("purchaseItem", function(id, purchased) {
+		console.log("Item was purchased");
+		db.collection("items").updateOne({_id: ObjectID(id)}, { $set: { purchased: purchased }});
+	});
+
+	socket.on("unPurchaseItem", function(id, purchased) {
+		console.log("Item was un-purchased");
+		db.collection("items").updateOne({_id: ObjectID(id)}, { $set: { purchased: purchased }});
+	});*/
 
 	socket.on("receiveItemFromClient", function(group, name, quantity, comments, priority) {
 		let objToInsert = {
@@ -70,13 +84,26 @@ io.on("connection", function(socket) {
 		//db.close();
 	});
 
+	socket.on("editItem", function(id, name, quantity, comments, priority) {
+		console.log(id + " "+name+" "+quantity+" "+comments+" "+priority);
+		db.collection("items").updateOne({_id: ObjectID(id)}, {$set: {
+			name: name,
+			quantity: quantity,
+			comments: comments,
+			priority: priority
+		}}, 
+			sendItemListToClient);
+		console.log("Item updated");
+	});
+
+	socket.on("deleteItem", function(id) {
+		db.collection("items").removeOne({_id: ObjectID(id)}, sendItemListToClient);
+	});
+
 	socket.on("disconnect", function() {
 		console.log("Somebody disconnected.");
 	});
 	
-	/*socket.on("receiveItemFromClient", function(name, quantity, comment, priority) {
-		io.emit("displayItemFromServer", name, quantity, comment, priority);
-	});*/
 });
 
 

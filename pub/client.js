@@ -14,37 +14,58 @@ socket.on("updateItemList", function(items) {
 
     $("#groupID").text(retrieve(group));
 
-    let d = new Date();
-    $("#date").text(formatDate(d));
+    $("#date").text(formatDate(new Date()));
 
     var i;
     for(i of items) {
         let t = i;
-        var h = $("<tr class='table-item'><td></td><td>"+retrieve(i.name)+"</td><td>"+i.quantity+"</td><td>"+i.comments+"</td><td></td></tr>");
+        var h = $("<tr id='"+t._id+"' class='table-item'><td></td><td class='"+t._id+"'>"+retrieve(t.name)+"</td><td class='"+t._id+"'>"+t.quantity+"</td><td class='"+t._id+"'>"+t.comments+"</td><td></td></tr>");
         
-        var pb = $("<button class='priority-button' type='button'>"+i.priority+"</button>");
-        var mb = $("<button class='more-button' type='button'>More</button><div id='"+t._id+"'class='more-button-content'>Dropdown Content</div>");
+        var pb = $("<button class='priority-button' type='button'>"+t.priority+"</button>");
+        var editb = $("<button class='more-button' type='button'>Edit</button>");
+        var delb = $("<button class='more-button' type='button'>Delete</button>");
 
 
        pb.click(function() {
-            $("#table-body tr").remove();
             socket.emit("togglePriority", t._id, t.priority);
-            //socket.emit("getGroupItems");
             console.log(t.name + " " + t.priority);
         });
         
-        /*mb.hover(function() {
-            $("#"+t._id).show();
-		});
-
-        $("#"+t._id).hover(function() {
-            $("#"+t._id).show();
-        });*/
         
         $(h.children()[0]).append(pb);
-        $(h.children()[4]).append(mb);
+        $(h.children()[4]).append(editb).append(delb);
+
+        editb.click(function() {
+            $("#storeItemID").val(t._id);
+            $("#editModalItemName").val(t.name);
+            $("#editModalItemQuantity").val(t.quantity);
+            $("#editModalItemComment").val(t.comments);
+            $("#mainView").hide();
+            $("#editItemModal").show();
+        });
+
+        delb.click(function() {
+            var c = confirm("Are you sure?");
+            if(c)
+                socket.emit("deleteItem", t._id);
+        });
         
         $("#table-body").append(h);
+
+        if(t.purchased == true) {
+            console.log("Changing background color to green");
+            $("#"+t._id).css("background-color", "#99ff66");
+        }
+        else {
+            console.log("Changing the background color to blue");
+            $("#"+t._id).css("background-color", "#90AFC5");
+        }
+
+        $("."+t._id).click(function() {
+            console.log("The item you are sending to the server is "+t.name+" and the purchased boolean is "+t.purchased);
+            socket.emit("togglePurchased", t._id, t.purchased);
+        });
+
     }
 
 
@@ -55,6 +76,7 @@ function startItAll() {
     //socket.emit("getAllItems");
 
     $("#addItemModal").hide();
+    $("#editItemModal").hide();
 
     $("#addItemButton").click(function () {
         $("#mainView").hide();
@@ -64,6 +86,16 @@ function startItAll() {
     $("#addItemCancel").click(function () {
         $("#mainView").show();
         $("#addItemModal").hide();
+    });
+
+    $("#editItemButton").click(function () {
+        $("#mainView").hide();
+        $("#editItemModal").show();
+    });
+
+    $("#editItemCancel").click(function () {
+        $("#mainView").show();
+        $("#editItemModal").hide();
     });
 
 
@@ -90,8 +122,33 @@ function startItAll() {
         }
     });
 
+    //Ryan TODO: validate input before sending to server
+    $("#editModalItemSubmit").click(function () {
+        $("#mainView").show();
+        $("#editItemModal").hide();
+        if (!validateName($("#editModalItemName").val())) {
+            //TODO: Handle bad name input
+        }
+        else if (!validateQuantity($("#editModalItemQuantity").val())) {
+            //TODO: Handle bad quantity input
+        }
+        else {
+            console.log("It's going to send the update to ther server");
+            socket.emit("editItem",
+                $("#storeItemID").val(),
+                $("#editModalItemName").val(),
+                $("#editModalItemQuantity").val(),
+                $("#editModalItemComment").val(),
+                $("#editModalItemPriority").is(':checked')
+            );
+            $("#table-body tr").remove();
+        }
+    });
+
+
     socket.emit("getGroupItems");
-}
+};
+
 
 $(startItAll);
 
