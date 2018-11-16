@@ -1,18 +1,88 @@
 
 var socket = io();
 
-socket.on("displayItemFromServer", function (name, quantity, comment, priority) {
+var group = "test_group";
+
+/*socket.on("displayItemFromServer", function (name, quantity, comment, priority) {
     console.log("NAME: " + name + "\nQUANTITY: " + quantity + "\nCOMMENT: " + comment + "\nPRIORITY: " + priority);
+});*/
+
+socket.on("updateItemList", function(items) {
+    $("#table-body").html("");
+
+    //$("#groupID").text(retrieve(items[0].groupid));
+
+    $("#groupID").text(retrieve(group));
+
+    $("#date").text(formatDate(new Date()));
+
+    var i;
+    for(i of items) {
+        let t = i;
+        var h = $("<tr id='"+t._id+"' class='table-item'><td></td><td class='"+t._id+"'>"+retrieve(t.name)+"</td><td class='"+t._id+"'>"+t.quantity+"</td><td class='"+t._id+"'>"+t.comments+"</td><td></td></tr>");
+        
+        var pb = $("<button class='priority-button' type='button'>"+t.priority+"</button>");
+        var editb = $("<button class='more-button' type='button'>Edit</button>");
+        var delb = $("<button class='more-button' type='button'>Delete</button>");
+
+
+       pb.click(function() {
+            socket.emit("togglePriority", t._id, t.priority);
+            console.log(t.name + " " + t.priority);
+        });
+        
+        
+        $(h.children()[0]).append(pb);
+        $(h.children()[4]).append(editb).append(delb);
+
+        editb.click(function() {
+            $("#storeItemID").val(t._id);
+            $("#editModalItemName").val(t.name);
+            $("#editModalItemQuantity").val(t.quantity);
+            $("#editModalItemComment").val(t.comments);
+            $("#mainView").hide();
+            $("#editItemModal").show();
+        });
+
+        delb.click(function() {
+            var c = confirm("Are you sure?");
+            if(c)
+                socket.emit("deleteItem", t._id);
+        });
+        
+        $("#table-body").append(h);
+
+        if(t.purchased == true) {
+            console.log("Changing background color to green");
+            $("#"+t._id).css("background-color", "#99ff66");
+        }
+        else {
+            console.log("Changing the background color to blue");
+            $("#"+t._id).css("background-color", "#90AFC5");
+        }
+
+        $("."+t._id).click(function() {
+            console.log("The item you are sending to the server is "+t.name+" and the purchased boolean is "+t.purchased);
+            socket.emit("togglePurchased", t._id, t.purchased);
+        });
+
+    }
+
+
 });
 
-socket.on("getItemList", function (items) {
-    console.log(items);
-});
 
 function startItAll() {
+
+    //changeGroupModal
+    //generateGroupButton
+    //createGroupButton
+
     socket.emit("getAllItems");
     socket.emit("getGroupItems");
 
+    $("#changeGroupModal").show();
+    $("#mainView").hide();
     $("#addItemModal").hide();
 
     $("#addItemButton").click(function () {
@@ -23,12 +93,10 @@ function startItAll() {
     $("#addItemCancel").click(function () {
         $("#mainView").show();
         $("#addItemModal").hide();
+        clearAllInputFields();
     });
 
-    //Ryan TODO: validate input before sending to server
     $("#modalItemSubmit").click(function () {
-        $("#mainView").show();
-        $("#addItemModal").hide();
         if (!validateName($("#modalItemName").val())) {
             //TODO: Handle bad name input
         }
@@ -37,16 +105,40 @@ function startItAll() {
         }
         else {
             socket.emit("receiveItemFromClient",
-                $("#modalItemName").val(),
+                cleanString($("#modalItemName").val()),
                 $("#modalItemQuantity").val(),
                 $("#modalItemComment").val(),
-                $("#modalItemPriority").val()
+                getModalItemPriority()
             );
+            $("#mainView").show();
+            $("#addItemModal").hide();
+            clearAllInputFields();
         }
+    });
+
+    $("#createGroupButton").click(function () {
+        //TODO: handle the group value
+        $("#changeGroupModal").hide();
+        $("#mainView").show();
+    });
+
+    $("#generateGroupButton").click(function () {
+        //TODO: handle the group generation
+        $("#changeGroupModal").hide();
+        $("#mainView").show();
+    });
+
+    $("#changeGroupButton").click(function () {
+
+        $("#changeGroupModal").show();
+        $("#mainView").hide();
+        $("#addItemModal").hide();
     });
 }
 
+
 $(startItAll);
+
 
 function validateName(name) {
     return (name.replace(/\s/g, '').length > 0); //Return true if not empty string or not all whitespace
@@ -54,12 +146,15 @@ function validateName(name) {
 
 function validateQuantity(quantity) {
     let str = quantity.toString();
+    //console.log("STEP 1: " + str);
     let q = str.replace(/\s/g, '');
+    //console.log("STEP 2: " + q);
     if (q.length < 1) return false;
     for (let i = 0; i < q.length; i++) {
         if (q[i] < '0' || q[i] > '9') return false;
     }
-    //if (q.parseInt() < 1) return false;
+    //console.log("STEP 3: " + parseInt(q));
+    if (parseInt(q) < 1) return false;
     return true;
 }
 
@@ -99,19 +194,12 @@ function dateMillis(date) {
     return date.getTime();
 }
 
-socket.on("updateItemList", function(items) {
-    $("#groupID").text(retrieve(items[0].groupid));
-
-    let d = new Date();
-    $("#date").text(formatDate(d));
-
-    let i;
-    for(i of items) {
-        var h = $("<tr><td><input type='checkbox'/></td><td>"+retrieve(i.name)+"</td><td>"+i.quantity+"</td><td><input type='button' id='comments' value='Show Comments'/></td><td><input type='button' value='Menu'/></td></tr>");
-		$("#itemList").append(h);
+function fixComment(comment) {
+    if(typeof(comment) === 'undefined') {
+        return "";
     }
-    //console.log(items);
-});
+}
+
 
 exports.cleanString = cleanString;
 exports.retrieve = retrieve;

@@ -18,13 +18,14 @@
         <div id="mainView">
             <div id="header">
                 <div id="left-header">
-                    Group: asdvcda
+                    Group: <span id="groupID">No Group Available</span>
+                    <button type="button" id="changeGroupButton" class="styledButton">Change group</button>
                 </div>
                 <div id="center-header">
                     Shop 365
                 </div>
                 <div id="right-header">
-                    mm/dd/yyyy
+                    Date: <span id="date">No Date Available</span>
                 </div>
             </div>
             <div id="item-form">
@@ -41,32 +42,46 @@
                                 <th id="table-name">Name</th>
                                 <th id="table-quantity">Quantity</th>
                                 <th id="table-comments">Comments</th>
-                                <th id="table-extra">Extra</th>
+                                <th id="table-extra">More</th>
                             </tr>
                         </thead>
                         <tbody id="table-body">
                             <tr class="table-item">
-                                <td>false</td>
+                                <td><button type="button" class="priority-button">True</button></td>
                                 <td>Oranges</td>
                                 <td>5</td>
                                 <td>Only get the big ones</td>
                                 <td>
-                                    <div id="more-button">
-                                        <button type="button">
-                                            More
+                                    <div class="more-button">
+                                        <button type="button" class="edit-button">
+                                            Edit
+                                        </button>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="more-button">
+                                        <button type="button" class="delete-button">
+                                            Delete
                                         </button>
                                     </div>
                                 </td>
                             </tr>
                             <tr class="table-item">
-                                <td>true</td>
+                                <td><button type="button" class="priority-button">False</button></td>
                                 <td>Bananas</td>
                                 <td>2</td>
                                 <td></td>
                                 <td>
-                                    <div id="more-button">
-                                        <button type="button">
-                                            More
+                                    <div class="more-button">
+                                        <button type="button" class="edit-button">
+                                            Edit
+                                        </button>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <button type="button" class="delete-button">
+                                            Delete
                                         </button>
                                     </div>
                                 </td>
@@ -93,8 +108,39 @@
             <br><br>
             Priority: <input type="checkbox" name="addItemPriority" id="modalItemPriority">
             <br><br>
+            <div id="validateAddItemDiv">
+                Illegal field names detected.
+            </div>
             <button type="button" id="addItemCancel">Cancel</button>
             <input type="submit" name="addItemSubmit" id="modalItemSubmit" value="Submit">
+        </div>
+
+        <div id="changeGroupModal">
+            <h1>Shop 365</h1>
+            <label for="changeGroupText">Enter Group Name:</label>
+            <input type="text" id="changeGroupText">
+            <input type="submit" value="GO" id="createGroupButton">
+            <div id="validateGroupDiv">
+                <br>
+                That group does not exist
+            </div>
+            <div id="generateGroupButton">
+                <button type="button">Generate new group</button>
+            </div>
+        </div>
+        <div id="editItemModal">
+            <h1>Edit Item</h1>
+            <input type="text" name="itemID" id="storeItemID" readonly>
+            Item Name: <input type="text" name="editItemName" id="editModalItemName">
+            <br><br>
+            Quantity: <input type="number" name="editItemQuantity" id="editModalItemQuantity" min="1" value="1">
+            <br><br>
+            Comments (optional): <input type="text" name="editItemComment" id="editModalItemComment">
+            <br><br>
+            Priority: <input type="checkbox" name="editItemPriority" id="editModalItemPriority">
+            <br><br>
+            <button type="button" id="editItemCancel">Cancel</button>
+            <input type="submit" name="editItemSubmit" id="editModalItemSubmit" value="Submit">
         </div>
     </div>
 </body>
