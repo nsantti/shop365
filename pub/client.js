@@ -66,6 +66,25 @@ function startItAll() {
             clearAllInputFields();
         }
     });
+
+    $("#createGroupButton").click(function () {
+        //TODO: handle the group value
+        $("#changeGroupModal").hide();
+        $("#mainView").show();
+    });
+
+    $("#generateGroupButton").click(function () {
+        //TODO: handle the group generation
+        $("#changeGroupModal").hide();
+        $("#mainView").show();
+    });
+
+    $("#changeGroupButton").click(function () {
+
+        $("#changeGroupModal").show();
+        $("#mainView").hide();
+        $("#addItemModal").hide();
+    });
 }
 
 $(startItAll);

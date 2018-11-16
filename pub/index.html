@@ -8,9 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
 
-    <script src="jquery-3.3.1.js" type="text/javascript"></script>
     <script src="/socket.io/socket.io.js" type="text/javascript"></script>
-    <script src="client.js" type="text/javascript"></script>
+    <script src="jquery-3.3.1.js"></script>
+    <script src="client.js"></script>
 </head>
 
 <body>
@@ -33,6 +33,61 @@
                         Add new item...
                     </button>
                 </div>
+                <div id="form-table">
+                    <table id="the-table">
+                        <thead id="table-header">
+                            <tr>
+                                <th id="table-priority">Priority</th>
+                                <th id="table-name">Name</th>
+                                <th id="table-quantity">Quantity</th>
+                                <th id="table-comments">Comments</th>
+                                <th id="table-extra">More</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <tr class="table-item">
+                                <td><button type="button" class="priority-button">True</button></td>
+                                <td>Oranges</td>
+                                <td>5</td>
+                                <td>Only get the big ones</td>
+                                <td>
+                                    <div class="more-button">
+                                        <button type="button" class="edit-button">
+                                            Edit
+                                        </button>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="more-button">
+                                        <button type="button" class="delete-button">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="table-item">
+                                <td><button type="button" class="priority-button">False</button></td>
+                                <td>Bananas</td>
+                                <td>2</td>
+                                <td></td>
+                                <td>
+                                    <div class="more-button">
+                                        <button type="button" class="edit-button">
+                                            Edit
+                                        </button>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>
+                                        <button type="button" class="delete-button">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div id="footer">
                 <button type="button" id="removeAllButton" class="styledButton">
@@ -41,7 +96,7 @@
             </div>
         </div>
 
-        
+
         <div id="addItemModal">
             <h1>Add Item</h1>
             Item Name: <input type="text" name="addItemName" id="modalItemName">
@@ -54,6 +109,16 @@
             <br><br>
             <button type="button" id="addItemCancel">Cancel</button>
             <input type="submit" name="addItemSubmit" id="modalItemSubmit" value="Submit">
+        </div>
+
+        <div id="changeGroupModal">
+            <h1>Shop 365</h1>
+            <label for="changeGroupText">Enter Group Name:</label>
+            <input type="text" id="changeGroupText">
+            <input type="submit" value="GO" id="createGroupButton">
+            <div id="generateGroupButton">
+                <button type="button">Generate new group</button>
+            </div>
         </div>
     </div>
 </body>
