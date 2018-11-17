@@ -6,7 +6,9 @@ var ObjectID = mongodb.ObjectID;
 var client = new MongoClient("mongodb://localhost:27017", { useNewUrlParser: true });
 var db;
 
-var groups = [];
+//var groups = [];
+
+var clientGroup;
 
 var express = require("express");
 
@@ -24,7 +26,7 @@ app.use(express.static("pub"));
 
 function sendItemListToClient(err, res) {
 	console.log("Sending item list to client");
-	db.collection("items").find({}).toArray(function(err, docs) {
+	db.collection("items").find({groupid: clientGroup}).toArray(function(err, docs) {
 		if (err!=null) {
 			console.log("ERROR: " + err);
 		}
@@ -37,19 +39,22 @@ function sendItemListToClient(err, res) {
 io.on("connection", function(socket) {
 	console.log("Somebody connected...");
 
-	socket.on("getGroups", function() {
-		db.collection("items").find({}, { projection: { group: 1 }}).toArray(function(err, docs) {
+
+	socket.on("getGroupItems", function(group) {
+		clientGroup = group;										//"Request Refresh Call"
+		db.collection("items").find({groupid: clientGroup}).toArray(function(err, docs) {
 			if (err!=null) {
 				console.log("ERROR: " + err);
 			}
 			else {
-				socket.emit("updateGroupList", docs);
-			}	
+				console.log("Sending the group list to client");
+				socket.emit("updateItemList", docs);
+			}
 		});
-	})
+	});
 
-	socket.on("getGroupItems", function(group) {											//"Request Refresh Call"
-		db.collection("items").find({group: group}).toArray(function(err, docs) {
+	socket.on("getAllItems", function() {											//"Request Refresh Call"
+		db.collection("items").find({}).toArray(function(err, docs) {
 			if (err!=null) {
 				console.log("ERROR: " + err);
 			}
@@ -58,17 +63,6 @@ io.on("connection", function(socket) {
 			}
 		});
 	});
-
-	socket.on("getAllItems", function(group) {											//"Request Refresh Call"
-	db.collection("items").find({}).toArray(function(err, docs) {
-		if (err!=null) {
-			console.log("ERROR: " + err);
-		}
-		else {
-			socket.emit("updateItemList", docs);
-		}
-	});
-});
 
 	socket.on("togglePriority", function(id, priority) {
 		console.log(oppositeBool(priority));
@@ -79,16 +73,6 @@ io.on("connection", function(socket) {
 		console.log("Toggling the purchased field of " + id + "and purchased should become "+ oppositeBool(purchased));
 		db.collection("items").updateOne({_id: ObjectID(id)}, { $set: { purchased: oppositeBool(purchased) }}, sendItemListToClient);
 	});
-
-	/*socket.on("purchaseItem", function(id, purchased) {
-		console.log("Item was purchased");
-		db.collection("items").updateOne({_id: ObjectID(id)}, { $set: { purchased: purchased }});
-	});
-
-	socket.on("unPurchaseItem", function(id, purchased) {
-		console.log("Item was un-purchased");
-		db.collection("items").updateOne({_id: ObjectID(id)}, { $set: { purchased: purchased }});
-	});*/
 
 	socket.on("receiveItemFromClient", function(group, name, quantity, comments, priority) {
 		let objToInsert = {
@@ -129,11 +113,11 @@ io.on("connection", function(socket) {
 });
 
 
-function findAll(collection) {
-	db.collection(collection).find({}).toArray(function(err, result) {
+function findAll(collection, group) {
+	db.collection(collection).find({groupid: group}).toArray(function(err, result) {
 		if(err) throw err;
-		//console.log(result);
-		client.close();
+		console.log(result);
+		//client.close();
 	});
 }
 

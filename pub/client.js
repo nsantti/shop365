@@ -10,6 +10,7 @@ var currentItem;
 });*/
 
 socket.on("updateItemList", function(items) {
+    console.log(items);
     $("#table-body").html("");
 
     //$("#groupID").text(retrieve(items[0].groupid));
@@ -100,11 +101,11 @@ function startItAll() {
     //changeGroupModal
     //generateGroupButton
     //createGroupButton
-    if(typeof(group) === 'undefined') {
+    if(typeof(group) === 'undefined') {     //All items are loaded and then filtered when group is specified
         socket.emit("getAllItems");
     }
     else {
-        socket.emit("getGroupItems", group);
+        socket.emit("getGroupItems", cleanString(group));
     }
 
     $("#changeGroupModal").show();
@@ -131,7 +132,7 @@ function startItAll() {
         }
         else {
             socket.emit("receiveItemFromClient",
-                group,
+                cleanString(group),
                 cleanString($("#modalItemName").val()),
                 $("#modalItemQuantity").val(),
                 $("#modalItemComment").val(),
@@ -166,8 +167,9 @@ function startItAll() {
 
     $("#createGroupButton").click(function () {
         group = $("#changeGroupText").val();
-        console.log(group);
-        socket.emit("getGroupItems", group);
+        console.log(cleanString(group));
+        //socket.emit("getAllItems");
+        socket.emit("getGroupItems", cleanString(group));
         //TODO: handle the group value
         $("#changeGroupModal").hide();
         $("#mainView").show();
