@@ -93,6 +93,17 @@ function updateClickHandlers() {
         $("#confirmDeleteModal").hide();
         socket.emit("deleteItem", currentItem._id);
     });
+    //Nick added these
+    $("#cancelDeleteAllItemsButton").click(function() {
+        $("#mainView").show();
+        $("#confirmDeleteAllModal").hide();
+    });
+
+    $("#confirmDeleteAllItemsButton").click(function() {
+        $("#mainView").show();
+        $("#confirmDeleteAllModal").hide();
+        socket.emit("removePurchased");
+    });
 
 }
 
@@ -111,6 +122,7 @@ function startItAll() {
     $("#changeGroupModal").show();
     $("#mainView").hide();
     $("#addItemModal").hide();
+    $("#confirmDeleteAllModal").hide();
 
     $("#addItemButton").click(function () {
         $("#mainView").hide();
@@ -190,6 +202,12 @@ function startItAll() {
     $("#editItemCancel").click(function() {
         $("#mainView").show();
         $("#editItemModal").hide();
+    });
+
+    $("#removeAllButton").click(function() {
+        //socket.emit("removePurchased");
+        $("#confirmDeleteAllModal").show();
+        $("#mainView").hide();
     });
 }
 

@@ -271,7 +271,7 @@ td {
     display: none;
 }
 
-#confirmDeleteModal {
+#confirmDeleteModal, #confirmDeleteAllModal {
     text-align: center;
     background-color: white;
     width: 400px;

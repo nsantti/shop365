@@ -106,6 +106,10 @@ io.on("connection", function(socket) {
 		db.collection("items").removeOne({_id: ObjectID(id)}, sendItemListToClient);
 	});
 
+	socket.on("removePurchased", function() {
+		db.collection("items").remove({purchased: true}, sendItemListToClient);
+	});
+
 	socket.on("disconnect", function() {
 		console.log("Somebody disconnected.");
 	});
