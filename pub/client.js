@@ -1,7 +1,7 @@
 
 var socket = io();
 
-var group = "test_group";
+var group;
 
 /*socket.on("displayItemFromServer", function (name, quantity, comment, priority) {
     console.log("NAME: " + name + "\nQUANTITY: " + quantity + "\nCOMMENT: " + comment + "\nPRIORITY: " + priority);
@@ -12,7 +12,9 @@ socket.on("updateItemList", function(items) {
 
     //$("#groupID").text(retrieve(items[0].groupid));
 
-    $("#groupID").text(retrieve(group));
+    if(typeof(group) !== 'undefined') {
+        $("#groupID").text(retrieve(group));
+    }
 
     $("#date").text(formatDate(new Date()));
 
@@ -77,9 +79,12 @@ function startItAll() {
     //changeGroupModal
     //generateGroupButton
     //createGroupButton
-
-    socket.emit("getAllItems");
-    socket.emit("getGroupItems");
+    if(typeof(group) === 'undefined') {
+        socket.emit("getAllItems");
+    }
+    else {
+        socket.emit("getGroupItems", group);
+    }
 
     $("#changeGroupModal").show();
     $("#mainView").hide();
@@ -117,7 +122,31 @@ function startItAll() {
         }
     });
 
+    $("#editModalItemSubmit").click(function () {
+        if (!validateName($("#editModalItemName").val())) {
+            //TODO: Handle bad name input
+        }
+        else if (!validateQuantity($("#editModalItemQuantity").val())) {
+            //TODO: Handle bad quantity input
+        }
+        else {
+            socket.emit("editItem",    //id, name, quantity, comments, priority
+                $("#storeItemID").val(),
+                cleanString($("#editModalItemName").val()),
+                $("#editModalItemQuantity").val(),
+                $("#editModalItemComment").val(),
+                getModalItemPriority()
+            );
+            $("#mainView").show();
+            $("#addItemModal").hide();
+            clearAllInputFields();
+        }
+    });
+
     $("#createGroupButton").click(function () {
+        group = $("#changeGroupText").val();
+        console.log(group);
+        socket.emit("getGroupItems", group);
         //TODO: handle the group value
         $("#changeGroupModal").hide();
         $("#mainView").show();
@@ -130,7 +159,6 @@ function startItAll() {
     });
 
     $("#changeGroupButton").click(function () {
-
         $("#changeGroupModal").show();
         $("#mainView").hide();
         $("#addItemModal").hide();

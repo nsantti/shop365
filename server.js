@@ -37,8 +37,19 @@ function sendItemListToClient(err, res) {
 io.on("connection", function(socket) {
 	console.log("Somebody connected...");
 
-	socket.on("getGroupItems", function() {											//"Request Refresh Call"
-		db.collection("items").find({}).toArray(function(err, docs) {
+	socket.on("getGroups", function() {
+		db.collection("items").find({}, { projection: { group: 1 }}).toArray(function(err, docs) {
+			if (err!=null) {
+				console.log("ERROR: " + err);
+			}
+			else {
+				socket.emit("updateGroupList", docs);
+			}	
+		});
+	})
+
+	socket.on("getGroupItems", function(group) {											//"Request Refresh Call"
+		db.collection("items").find({group: group}).toArray(function(err, docs) {
 			if (err!=null) {
 				console.log("ERROR: " + err);
 			}
@@ -47,6 +58,17 @@ io.on("connection", function(socket) {
 			}
 		});
 	});
+
+	socket.on("getAllItems", function(group) {											//"Request Refresh Call"
+	db.collection("items").find({}).toArray(function(err, docs) {
+		if (err!=null) {
+			console.log("ERROR: " + err);
+		}
+		else {
+			socket.emit("updateItemList", docs);
+		}
+	});
+});
 
 	socket.on("togglePriority", function(id, priority) {
 		console.log(oppositeBool(priority));
