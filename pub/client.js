@@ -3,6 +3,8 @@ var socket = io();
 
 var group;
 
+var currentItem;
+
 /*socket.on("displayItemFromServer", function (name, quantity, comment, priority) {
     console.log("NAME: " + name + "\nQUANTITY: " + quantity + "\nCOMMENT: " + comment + "\nPRIORITY: " + priority);
 });*/
@@ -22,10 +24,11 @@ socket.on("updateItemList", function(items) {
     for(i of items) {
         let t = i;
         var h = $("<tr id='"+t._id+"' class='table-item'><td></td><td class='"+t._id+"'>"+retrieve(t.name)+"</td><td class='"+t._id+"'>"+t.quantity+"</td><td class='"+t._id+"'>"+t.comments+"</td><td></td></tr>");
-        
-        var pb = $("<button class='priority-button' type='button'>"+t.priority+"</button>");
-        var editb = $("<button class='more-button' type='button'>Edit</button>");
-        var delb = $("<button class='more-button' type='button'>Delete</button>");
+        var priorityButtonClass = t.priority ? 'truePriorityButton' : 'falsePriorityButton';
+        var priorityText = t.priority ? "High" : "Low";
+        var pb = $("<button class=" + priorityButtonClass + " type='button'>"+priorityText+"</button>");
+        var editb = $("<button class='edit-button' type='button'>Edit</button>");
+        var delb = $("<button class='delete-button' type='button'>Delete</button>");
 
 
        pb.click(function() {
@@ -47,16 +50,14 @@ socket.on("updateItemList", function(items) {
         });
 
         delb.click(function() {
-            var c = confirm("Are you sure?");
-            if(c)
-                socket.emit("deleteItem", t._id);
+            currentItem = t;
         });
         
         $("#table-body").append(h);
 
         if(t.purchased == true) {
             console.log("Changing background color to green");
-            $("#"+t._id).css("background-color", "#99ff66");
+            $("#"+t._id).css("background-color", "#7c7c7c");
         }
         else {
             console.log("Changing the background color to blue");
@@ -70,9 +71,29 @@ socket.on("updateItemList", function(items) {
 
     }
 
-
+    updateClickHandlers();
 });
 
+//Nate
+function updateClickHandlers() {
+    $(".delete-button").click(function(event) {
+        $("#confirmDeleteModal").show();
+        $("#mainView").hide();
+        $("#deleteItemName").text(retrieve(currentItem.name));
+    });
+
+    $("#cancelDeleteItemButton").click(function() {
+        $("#mainView").show();
+        $("#confirmDeleteModal").hide();
+    });
+
+    $("#confirmDeleteItemButton").click(function() {
+        $("#mainView").show();
+        $("#confirmDeleteModal").hide();
+        socket.emit("deleteItem", currentItem._id);
+    });
+
+}
 
 function startItAll() {
 
@@ -163,6 +184,22 @@ function startItAll() {
         $("#mainView").hide();
         $("#addItemModal").hide();
     });
+
+    $("#editItemCancel").click(function() {
+        $("#mainView").show();
+        $("#editItemModal").hide();
+    });
+}
+
+function getModalItemPriority() {
+    return $("#modalItemPriority").prop('checked');
+}
+
+function clearAllInputFields() {
+    $("#modalItemName").val("");
+    $("#modalItemQuantity").val(1);
+    $("#modalItemComment").val("");
+    $("#modalItemPriority").prop('checked', false);
 }
 
 function getModalItemPriority() {
