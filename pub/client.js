@@ -43,9 +43,10 @@ socket.on("updateItemList", function(items) {
 
         editb.click(function() {
             $("#storeItemID").val(t._id);
-            $("#editModalItemName").val(t.name);
+            $("#editModalItemName").val(retrieve(t.name));
             $("#editModalItemQuantity").val(t.quantity);
             $("#editModalItemComment").val(t.comments);
+            $("#editModalItemPriority").prop('checked', t.priority);
             $("#mainView").hide();
             $("#editItemModal").show();
         });
@@ -57,11 +58,11 @@ socket.on("updateItemList", function(items) {
         $("#table-body").append(h);
 
         if(t.purchased == true) {
-            console.log("Changing background color to green");
+            //console.log("Changing background color to green");
             $("#"+t._id).css("background-color", "#7c7c7c");
         }
         else {
-            console.log("Changing the background color to blue");
+            //console.log("Changing the background color to blue");
             $("#"+t._id).css("background-color", "#90AFC5");
         }
 
@@ -148,7 +149,7 @@ function startItAll() {
                 cleanString($("#modalItemName").val()),
                 $("#modalItemQuantity").val(),
                 $("#modalItemComment").val(),
-                getModalItemPriority()
+                $("#editModalItemPriority").is(":checked")
             );
             $("#mainView").show();
             $("#addItemModal").hide();
@@ -169,7 +170,7 @@ function startItAll() {
                 cleanString($("#editModalItemName").val()),
                 $("#editModalItemQuantity").val(),
                 $("#editModalItemComment").val(),
-                getModalItemPriority()
+                $("#editModalItemPriority").is(":checked")
             );
             $("#mainView").show();
             $("#addItemModal").hide();
@@ -212,7 +213,8 @@ function startItAll() {
 }
 
 function getModalItemPriority() {
-    return $("#modalItemPriority").prop('checked');
+
+    //return $("#modalItemPriority").prop('checked');
 }
 
 function clearAllInputFields() {
