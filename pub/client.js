@@ -1,16 +1,22 @@
 
 var socket = io();
 
-var group;
+var group = "No Group Selected";
+
+var clientItemArray = [];
 
 var currentItem;
+
+var purchasedCount;
 
 /*socket.on("displayItemFromServer", function (name, quantity, comment, priority) {
     console.log("NAME: " + name + "\nQUANTITY: " + quantity + "\nCOMMENT: " + comment + "\nPRIORITY: " + priority);
 });*/
 
-socket.on("updateItemList", function(items) {
-    console.log(items);
+socket.on("updateItemList", function(itemArrayFromServer) {
+    clientItemArray = itemArrayFromServer;
+    purchasedCount = 0;
+    //console.log(items);
     $("#table-body").html("");
 
     //$("#groupID").text(retrieve(items[0].groupid));
@@ -22,7 +28,7 @@ socket.on("updateItemList", function(items) {
     $("#date").text(formatDate(new Date()));
 
     var i;
-    for(i of items) {
+    for(i of clientItemArray) {
         let t = i;
         var h = $("<tr id='"+t._id+"' class='table-item'><td></td><td class='"+t._id+"'>"+retrieve(t.name)+"</td><td class='"+t._id+"'>"+t.quantity+"</td><td class='"+t._id+"'>"+t.comments+"</td><td></td></tr>");
         var priorityButtonClass = t.priority ? 'truePriorityButton' : 'falsePriorityButton';
@@ -60,10 +66,12 @@ socket.on("updateItemList", function(items) {
         if(t.purchased == true) {
             //console.log("Changing background color to green");
             $("#"+t._id).css("background-color", "#7c7c7c");
+            purchasedCount++;
         }
         else {
             //console.log("Changing the background color to blue");
             $("#"+t._id).css("background-color", "#90AFC5");
+            console.log(purchasedCount);
         }
 
         $("."+t._id).click(function() {
@@ -72,7 +80,8 @@ socket.on("updateItemList", function(items) {
         });
 
     }
-
+    console.log(purchasedCount);
+    //purchasedCount = 0;
     updateClickHandlers();
 });
 
@@ -80,7 +89,9 @@ socket.on("updateItemList", function(items) {
 function updateClickHandlers() {
     $(".delete-button").click(function(event) {
         $("#confirmDeleteModal").show();
+        $("#addItemModal").hide();
         $("#mainView").hide();
+        $("#editItemModal").hide();
         $("#deleteItemName").text(retrieve(currentItem.name));
     });
 
@@ -123,6 +134,7 @@ function startItAll() {
     $("#changeGroupModal").show();
     $("#mainView").hide();
     $("#addItemModal").hide();
+    $("#editItemModal").hide();
     $("#confirmDeleteAllModal").hide();
 
     $("#addItemButton").click(function () {
@@ -149,7 +161,7 @@ function startItAll() {
                 cleanString($("#modalItemName").val()),
                 $("#modalItemQuantity").val(),
                 $("#modalItemComment").val(),
-                $("#editModalItemPriority").is(":checked")
+                $("#modalItemPriority").is(":checked")
             );
             $("#mainView").show();
             $("#addItemModal").hide();
@@ -173,7 +185,7 @@ function startItAll() {
                 $("#editModalItemPriority").is(":checked")
             );
             $("#mainView").show();
-            $("#addItemModal").hide();
+            $("#editItemModal").hide();
             clearAllInputFields();
         }
     });
@@ -206,9 +218,13 @@ function startItAll() {
     });
 
     $("#removeAllButton").click(function() {
-        //socket.emit("removePurchased");
-        $("#confirmDeleteAllModal").show();
-        $("#mainView").hide();
+        if(purchasedCount > 0) {
+            $("#confirmDeleteAllModal").show();
+            $("#mainView").hide();
+        }
+        else {
+            alert("No items selected!");
+        }
     });
 }
 
