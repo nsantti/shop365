@@ -1,6 +1,8 @@
 
 var socket = io();
 
+var allGroups = [];
+
 var group = "No Group Selected";
 
 var clientItemArray = [];
@@ -9,9 +11,18 @@ var currentItem;
 
 var purchasedCount;
 
-/*socket.on("displayItemFromServer", function (name, quantity, comment, priority) {
-    console.log("NAME: " + name + "\nQUANTITY: " + quantity + "\nCOMMENT: " + comment + "\nPRIORITY: " + priority);
-});*/
+socket.on("updateGroupList", function(groupArrayFromServer) {
+    allGroups = groupArrayFromServer;
+    console.log(allGroups);
+    console.log(allGroups[0].groupid);
+    $("#groupSelector").html("");
+    
+    var z;
+    for(z of allGroups) {
+        let g = z;
+        $('#groupSelector').append('<option value='+g.groupid+'>'+retrieve(g.groupid)+'</option>');
+    }
+});
 
 socket.on("updateItemList", function(itemArrayFromServer) {
     clientItemArray = itemArrayFromServer;
@@ -124,6 +135,8 @@ function startItAll() {
     //changeGroupModal
     //generateGroupButton
     //createGroupButton
+    socket.emit("getGroups");
+
     if(typeof(group) === 'undefined') {     //All items are loaded and then filtered when group is specified
         socket.emit("getAllItems");
     }
@@ -191,7 +204,8 @@ function startItAll() {
     });
 
     $("#createGroupButton").click(function () {
-        group = $("#changeGroupText").val();
+        group = $("#groupSelector").val();
+        //group = $("#changeGroupText").val();
         console.log(cleanString(group));
         //socket.emit("getAllItems");
         socket.emit("getGroupItems", cleanString(group));
@@ -201,7 +215,9 @@ function startItAll() {
     });
 
     $("#generateGroupButton").click(function () {
+        group = prompt("Please enter a new group name");
         //TODO: handle the group generation
+        socket.emit("getGroupItems", cleanString(group));
         $("#changeGroupModal").hide();
         $("#mainView").show();
     });

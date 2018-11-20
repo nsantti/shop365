@@ -39,6 +39,18 @@ function sendItemListToClient(err, res) {
 io.on("connection", function(socket) {
 	console.log("Somebody connected...");
 
+	socket.on("getGroups", function() {
+		db.collection("items").find({}, {projection: { groupid: 1}}).toArray(function(err, docs) {
+			if(err != null) {
+				console.log("ERROR: " + err);
+			}
+			else {
+				console.log(docs);
+				//console.log("Sending all groups to client");
+				socket.emit("updateGroupList", docs);
+			}
+		});
+	});
 
 	socket.on("getGroupItems", function(group) {
 		clientGroup = group;										//"Request Refresh Call"
