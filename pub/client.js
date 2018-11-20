@@ -18,6 +18,7 @@ socket.on("updateGroupList", function(groupArrayFromServer) {
     $("#groupSelector").html("");
     
     if(allGroups.length != 0) {
+        $('#createGroupButton').prop('disabled',false).css('opacity',1);
         var z;
         for(z of allGroups) {
             let g = z;
@@ -25,6 +26,7 @@ socket.on("updateGroupList", function(groupArrayFromServer) {
         }
     }
     else {
+        $('#createGroupButton').prop('disabled',true).css('opacity',0.5);
         $('#groupSelector').append('<option>No Groups Available</option>');
     }
 });
@@ -236,7 +238,7 @@ function startItAll() {
     });
 
     $("#deleteGroupButton").click(function () {
-        var delGroup = confirm("Are you sure you want to delete this group and all of its items?");
+        var delGroup = confirm("Are you sure you want to delete the '"+retrieve(group)+"' group and all of its items?");
         if(delGroup == true) {
            socket.emit("deleteGroup", cleanString(group));
             $("#changeGroupModal").show();
