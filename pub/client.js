@@ -13,8 +13,8 @@ var purchasedCount;
 
 socket.on("updateGroupList", function(groupArrayFromServer) {
     allGroups = groupArrayFromServer;
-    console.log(allGroups);
-    console.log(allGroups[0].groupid);
+   // console.log(allGroups);
+    //console.log(allGroups[0].groupid);
     $("#groupSelector").html("");
     
     var z;
@@ -217,12 +217,14 @@ function startItAll() {
     $("#generateGroupButton").click(function () {
         group = prompt("Please enter a new group name");
         //TODO: handle the group generation
-        socket.emit("getGroupItems", cleanString(group));
+        socket.emit("createGroupEntry", cleanString(group));
+        //socket.emit("getGroupItems", cleanString(group));
         $("#changeGroupModal").hide();
         $("#mainView").show();
     });
 
     $("#changeGroupButton").click(function () {
+        socket.emit("getGroups");
         $("#changeGroupModal").show();
         $("#mainView").hide();
         $("#addItemModal").hide();

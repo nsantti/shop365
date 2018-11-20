@@ -26,7 +26,7 @@ app.use(express.static("pub"));
 
 function sendItemListToClient(err, res) {
 	console.log("Sending item list to client");
-	db.collection("items").find({groupid: clientGroup}).toArray(function(err, docs) {
+	db.collection("items").find({name: { $ne: "group_entry" }, groupid: clientGroup}).toArray(function(err, docs) {
 		if (err!=null) {
 			console.log("ERROR: " + err);
 		}
@@ -52,9 +52,23 @@ io.on("connection", function(socket) {
 		});
 	});
 
+	socket.on("createGroupEntry", function(newGroupFromClient) {
+		clientGroup = newGroupFromClient;
+		let objToInsert = {
+			name: "group_entry",
+			priority: false,
+			groupid: clientGroup,
+			date: Date(),
+			quantity: 0,
+			purchased: false,
+			comments: "Group entry for memory"
+		}
+		db.collection("items").insertOne(objToInsert, sendItemListToClient);
+	});
+
 	socket.on("getGroupItems", function(group) {
 		clientGroup = group;										//"Request Refresh Call"
-		db.collection("items").find({groupid: clientGroup}).toArray(function(err, docs) {
+		db.collection("items").find({name: { $ne: "group_entry" }, groupid: clientGroup}).toArray(function(err, docs) {
 			if (err!=null) {
 				console.log("ERROR: " + err);
 			}
