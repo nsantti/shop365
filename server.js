@@ -36,6 +36,20 @@ function sendItemListToClient(err, res) {
 	});
 }
 
+function sendGroupListToClient(err, res) {
+	console.log("sending group list to client");
+	db.collection("items").find({}, {projection: { groupid: 1}}).toArray(function(err, docs) {
+		if(err != null) {
+			console.log("ERROR: " + err);
+		}
+		else {
+			console.log(docs);
+			//console.log("Sending all groups to client");
+			io.emit("updateGroupList", docs);
+		}
+	});
+}
+
 io.on("connection", function(socket) {
 	console.log("Somebody connected...");
 
@@ -134,6 +148,10 @@ io.on("connection", function(socket) {
 
 	socket.on("removePurchased", function() {
 		db.collection("items").remove({purchased: true}, sendItemListToClient);
+	});
+
+	socket.on("deleteGroup", function(group) {
+		db.collection("items").remove({groupid: group}, sendGroupListToClient);
 	});
 
 	socket.on("disconnect", function() {
