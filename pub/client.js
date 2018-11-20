@@ -1,96 +1,142 @@
-
 var socket = io();
 
 var group = "test_group";
 
 var currentItem;
 
+var items = [];
+
+var sortingType = {
+    quantity: 0,
+    name: 1,
+    priority: 2,
+    none: 3
+}
+
+var currentSort;
 /*socket.on("displayItemFromServer", function (name, quantity, comment, priority) {
     console.log("NAME: " + name + "\nQUANTITY: " + quantity + "\nCOMMENT: " + comment + "\nPRIORITY: " + priority);
 });*/
 
-socket.on("updateItemList", function(items) {
+function updateGUI(arr) {
     $("#table-body").html("");
+    console.log("BEFORE SORT " + arr[0].name);
+    items = sortList(arr);
+    console.log("AFTER SORT " + arr[0].name);
 
-    //$("#groupID").text(retrieve(items[0].groupid));
-
-    $("#groupID").text(retrieve(group));
-
-    $("#date").text(formatDate(new Date()));
-
-    var i;
-    for(i of items) {
+    for (i of items) {
         let t = i;
-        var h = $("<tr id='"+t._id+"' class='table-item'><td></td><td class='"+t._id+"'>"+retrieve(t.name)+"</td><td class='"+t._id+"'>"+t.quantity+"</td><td class='"+t._id+"'>"+t.comments+"</td><td></td></tr>");
+        var h = $("<tr id='" + t._id + "' class='table-item'><td></td><td class='" + t._id + "'>" + retrieve(t.name) + "</td><td class='" + t._id + "'>" + t.quantity + "</td><td class='" + t._id + "'>" + t.comments + "</td><td></td></tr>");
         var priorityButtonClass = t.priority ? 'truePriorityButton' : 'falsePriorityButton';
         var priorityText = t.priority ? "High" : "Low";
-        var pb = $("<button class=" + priorityButtonClass + " type='button'>"+priorityText+"</button>");
+        var pb = $("<button class=" + priorityButtonClass + " type='button'>" + priorityText + "</button>");
         var editb = $("<button class='edit-button' type='button'>Edit</button>");
         var delb = $("<button class='delete-button' type='button'>Delete</button>");
 
 
-       pb.click(function() {
+        pb.click(function () {
             socket.emit("togglePriority", t._id, t.priority);
             console.log(t.name + " " + t.priority);
         });
-        
-        
+
+
         $(h.children()[0]).append(pb);
         $(h.children()[4]).append(editb).append(delb);
 
-        editb.click(function() {
+        editb.click(function () {
             $("#storeItemID").val(t._id);
-            $("#editModalItemName").val(t.name);
+            $("#editModalItemName").val(retrieve(t.name));
             $("#editModalItemQuantity").val(t.quantity);
             $("#editModalItemComment").val(t.comments);
+            $("#editModalItemPriority").prop('checked', t.priority);
             $("#mainView").hide();
             $("#editItemModal").show();
+            $("#editModalItemName").focus();
         });
 
-        delb.click(function() {
+        delb.click(function () {
             currentItem = t;
         });
-        
+
         $("#table-body").append(h);
 
-        if(t.purchased == true) {
+        if (t.purchased == true) {
             console.log("Changing background color to green");
-            $("#"+t._id).css("background-color", "#7c7c7c");
-        }
-        else {
+            $("#" + t._id).css("background-color", "#7c7c7c");
+        } else {
             console.log("Changing the background color to blue");
-            $("#"+t._id).css("background-color", "#90AFC5");
+            $("#" + t._id).css("background-color", "#90AFC5");
         }
 
-        $("."+t._id).click(function() {
-            console.log("The item you are sending to the server is "+t.name+" and the purchased boolean is "+t.purchased);
+        $("." + t._id).click(function () {
+            console.log("The item you are sending to the server is " + t.name + " and the purchased boolean is " + t.purchased);
             socket.emit("togglePurchased", t._id, t.purchased);
         });
 
     }
 
     updateClickHandlers();
+}
+socket.on("updateItemList", function (items) {
+    $("#table-body").html("");
+    $("#groupID").text(retrieve(group));
+    $("#date").text(makeDate());
+    updateGUI(items);
+
 });
 
 //Nate
 function updateClickHandlers() {
-    $(".delete-button").click(function(event) {
+    $(".delete-button").click(function (event) {
         $("#confirmDeleteModal").show();
         $("#mainView").hide();
         $("#deleteItemName").text(retrieve(currentItem.name));
     });
 
-    $("#cancelDeleteItemButton").click(function() {
+    $("#cancelDeleteItemButton").click(function () {
         $("#mainView").show();
         $("#confirmDeleteModal").hide();
     });
 
-    $("#confirmDeleteItemButton").click(function() {
+    $("#confirmDeleteItemButton").click(function () {
         $("#mainView").show();
         $("#confirmDeleteModal").hide();
         socket.emit("deleteItem", currentItem._id);
     });
 
+    $("#cancelDeleteAllItemsButton").click(function () {
+        $("#mainView").show();
+        $("#confirmDeleteAllModal").hide();
+    });
+
+    $("#confirmDeleteAllItemsButton").click(function () {
+        $("#mainView").show();
+        $("#confirmDeleteAllModal").hide();
+        socket.emit("removePurchased");
+    });
+
+}
+
+//Nate
+function sortList(arr) {
+    if (currentSort == sortingType.quantity) {
+        console.log("SORTING BY QUANTITY");
+        arr = arr.sort(function (a, b) {
+            if (a.quantity < b.quantity) return 1;
+            return -1;
+        });
+    } else if (currentSort == sortingType.name) {
+        arr = arr.sort(function (a, b) {
+            if (a.name > b.name) return 1;
+            return -1;
+        });
+    } else if (currentSort == sortingType.priority) {
+        arr = arr.sort(function (a, b) {
+            if (b.priority && !a.priority) return 1;
+            return -1;
+        })
+    }
+    return arr;
 }
 
 function startItAll() {
@@ -99,16 +145,23 @@ function startItAll() {
     //generateGroupButton
     //createGroupButton
 
-    socket.emit("getAllItems");
-    socket.emit("getGroupItems");
+    if (typeof (group) === 'undefined') { //All items are loaded and then filtered when group is specified
+        socket.emit("getAllItems");
+    } else {
+        socket.emit("getGroupItems", cleanString(group));
+    }
 
     $("#changeGroupModal").show();
     $("#mainView").hide();
     $("#addItemModal").hide();
+    $("#confirmDeleteAllModal").hide();
+    $("#changeGroupText").focus();
+    $("#changeGroupText").val('');
 
     $("#addItemButton").click(function () {
         $("#mainView").hide();
         $("#addItemModal").show();
+        $("#modalItemName").focus();
     });
 
     $("#addItemCancel").click(function () {
@@ -120,11 +173,9 @@ function startItAll() {
     $("#modalItemSubmit").click(function () {
         if (!validateName($("#modalItemName").val())) {
             //TODO: Handle bad name input
-        }
-        else if (!validateQuantity($("#modalItemQuantity").val())) {
+        } else if (!validateQuantity($("#modalItemQuantity").val())) {
             //TODO: Handle bad quantity input
-        }
-        else {
+        } else {
             socket.emit("receiveItemFromClient",
                 group,
                 cleanString($("#modalItemName").val()),
@@ -138,7 +189,30 @@ function startItAll() {
         }
     });
 
+    $("#editModalItemSubmit").click(function () {
+        if (!validateName($("#editModalItemName").val())) {
+            //TODO: Handle bad name input
+        } else if (!validateQuantity($("#editModalItemQuantity").val())) {
+            //TODO: Handle bad quantity input
+        } else {
+            socket.emit("editItem", //id, name, quantity, comments, priority
+                $("#storeItemID").val(),
+                cleanString($("#editModalItemName").val()),
+                $("#editModalItemQuantity").val(),
+                $("#editModalItemComment").val(),
+                $("#editModalItemPriority").is(":checked")
+            );
+            $("#mainView").show();
+            $("#editItemModal").hide();
+            clearAllInputFields();
+        }
+    });
+
     $("#createGroupButton").click(function () {
+        group = $("#changeGroupText").val();
+        console.log(cleanString(group));
+        //socket.emit("getAllItems");
+        socket.emit("getGroupItems", cleanString(group));
         //TODO: handle the group value
         $("#changeGroupModal").hide();
         $("#mainView").show();
@@ -151,16 +225,51 @@ function startItAll() {
     });
 
     $("#changeGroupButton").click(function () {
-
         $("#changeGroupModal").show();
+        $("#changeGroupText").val('');
         $("#mainView").hide();
         $("#addItemModal").hide();
     });
 
-    $("#editItemCancel").click(function() {
+    $("#editItemCancel").click(function () {
         $("#mainView").show();
         $("#editItemModal").hide();
     });
+
+    $("#editItemCancel").click(function () {
+        $("#mainView").show();
+        $("#editItemModal").hide();
+    });
+
+    $("#removeAllButton").click(function () {
+        //socket.emit("removePurchased");
+        $("#confirmDeleteAllModal").show();
+        $("#mainView").hide();
+    });
+
+    $("#table-quantity").click(function () {
+        currentSort = sortingType.quantity;
+        $("#table-name").css('background-color', '#90AFC5');
+        $("#table-priority").css('background-color', '#90AFC5');
+        $("#table-quantity").css('background-color', '#66a0c9');
+        updateGUI(items);
+    });
+
+    $("#table-name").click(function () {
+        currentSort = sortingType.name;
+        $("#table-name").css('background-color', '#66a0c9');
+        $("#table-priority").css('background-color', '#90AFC5');
+        $("#table-quantity").css('background-color', '#90AFC5');
+        updateGUI(items);
+    });
+
+    $("#table-priority").click(function () {
+        currentSort = sortingType.priority;
+        $("#table-name").css('background-color', '#90AFC5');
+        $("#table-priority").css('background-color', '#66a0c9');
+        $("#table-quantity").css('background-color', '#90AFC5');
+        updateGUI(items);
+    })
 }
 
 function getModalItemPriority() {
@@ -198,18 +307,18 @@ function validateQuantity(quantity) {
 
 // Takes a word, returns a string all lowercase separated by underscores
 function cleanString(str) {
-   return str.split(' ').filter(item => item.length > 0).map(word => word.toLowerCase()).join('_');
+    return str.split(' ').filter(item => item.length > 0).map(word => word.toLowerCase()).join('_');
 }
 
 // Takes a lowercase word separated by underscores.
 // Returns a string with spaces instead of underscores, with the first
 // letter of each word capitalized
 function retrieve(str) {
-   return str.split('_').map(capitalizeFirst).join(' ');
+    return str.split('_').map(capitalizeFirst).join(' ');
 }
 
 function capitalizeFirst(word) {
-   return word[0].toUpperCase() + word.substring(1);
+    return word[0].toUpperCase() + word.substring(1);
 }
 
 function makeDate() {
@@ -233,7 +342,7 @@ function dateMillis(date) {
 }
 
 function fixComment(comment) {
-    if(typeof(comment) === 'undefined') {
+    if (typeof (comment) === 'undefined') {
         return "";
     }
 }
@@ -244,4 +353,3 @@ exports.retrieve = retrieve;
 exports.makeDate = makeDate;
 exports.formatDate = formatDate;
 exports.dateMillis = dateMillis;
-

@@ -73,7 +73,7 @@ io.on("connection", function(socket) {
 			name: name,
 			priority: priority,
 			groupid: group,
-			date: Date(),
+			date: new Date(),
 			quantity: quantity,
 			purchased: false,
 			comments: comments
