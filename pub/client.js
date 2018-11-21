@@ -13,6 +13,7 @@ var purchasedCount;
 
 socket.on("updateGroupList", function(groupArrayFromServer) {
     allGroups = groupArrayFromServer;
+    console.log(groupArrayFromServer);
    // console.log(allGroups);
     //console.log(allGroups[0].groupid);
     $("#groupSelector").html("");

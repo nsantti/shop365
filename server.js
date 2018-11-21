@@ -38,12 +38,12 @@ function sendItemListToClient(err, res) {
 
 function sendGroupListToClient(err, res) {
 	console.log("sending group list to client");
-	db.collection("items").find({}, {projection: { groupid: 1}}).toArray(function(err, docs) {
+	db.collection("items").distinct('groupid').toArray(function(err, docs) {
 		if(err != null) {
 			console.log("ERROR: " + err);
 		}
 		else {
-			console.log(docs);
+			//console.log(docs);
 			//console.log("Sending all groups to client");
 			io.emit("updateGroupList", docs);
 		}
@@ -71,7 +71,7 @@ io.on("connection", function(socket) {
 		let objToInsert = {
 			name: "group_entry",
 			priority: false,
-			groupid: clientGroup,
+			groupid: newGroupFromClient,
 			date: Date(),
 			quantity: 0,
 			purchased: false,
@@ -80,9 +80,8 @@ io.on("connection", function(socket) {
 		db.collection("items").insertOne(objToInsert, sendItemListToClient);
 	});
 
-	socket.on("getGroupItems", function(group) {
-		clientGroup = group;										//"Request Refresh Call"
-		db.collection("items").find({name: { $ne: "group_entry" }, groupid: clientGroup}).toArray(function(err, docs) {
+	socket.on("getGroupItems", function(group) {									//"Request Refresh Call"
+		db.collection("items").find({name: { $ne: "group_entry" }, groupid: group}).toArray(function(err, docs) {
 			if (err!=null) {
 				console.log("ERROR: " + err);
 			}
