@@ -6,7 +6,7 @@ var ObjectID = mongodb.ObjectID;
 var client = new MongoClient("mongodb://localhost:27017", { useNewUrlParser: true });
 var db;
 
-//var groups = [];
+var groupArray = [];
 
 var clientGroup;
 
@@ -43,7 +43,8 @@ function sendGroupListToClient(err, res) {
 			console.log("ERROR: " + err);
 		}
 		else {
-			//console.log(docs);
+			groupArray = docs;
+			console.log(groupArray);
 			//console.log("Sending all groups to client");
 			io.emit("updateGroupList", docs);
 		}
@@ -59,8 +60,8 @@ io.on("connection", function(socket) {
 				console.log("ERROR: " + err);
 			}
 			else {
-				console.log(docs);
-				//console.log("Sending all groups to client");
+				groupArray = docs;
+				console.log(groupArray);
 				socket.emit("updateGroupList", docs);
 			}
 		});
@@ -158,6 +159,12 @@ io.on("connection", function(socket) {
 	});
 	
 });
+
+
+/*var nsp = io.of('/my-namespace');
+nsp.on('connection', function(socket){
+  console.log('someone connected');
+});*/
 
 
 function findAll(collection, group) {
