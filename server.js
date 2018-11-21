@@ -25,6 +25,21 @@ var io = socketio(server);
 app.use(express.static("pub"));
 
 function sendItemListToClient(err, res) {
+	db.collection(clientGroup).find({}).toArray(function(err, docs) {
+		if(err != null) {
+			console.log("ERROR: " + err);
+		}
+		else {
+			console.log("Sending the requested group's item list to the client - sendItemListToClient");
+			//io.sockets.in(clientGroup).emit('updateItemList', docs);
+			io.emit("updateItemList", docs);
+			//clientGroup = "";
+		}
+	});
+}
+
+
+/*function sendItemListToClient(err, res) {
 	console.log("Sending item list to client");
 	db.collection("items").find({name: { $ne: "group_entry" }}).toArray(function(err, docs) {
 		if (err!=null) {
@@ -34,9 +49,21 @@ function sendItemListToClient(err, res) {
 			io.emit("updateItemList", docs);
 		}
 	});
-}
+}*/
 
 function sendGroupListToClient(err, res) {
+	db.listCollections().toArray(function(err, cols) {
+		if(err != null) {
+			console.log("ERROR: " + err);
+		}
+		else {
+			//groupArray = cols;
+			socket.emit("updateGroupList", cols);
+		}
+	});
+}
+
+/*function sendGroupListToClient(err, res) {
 	console.log("sending group list to client");
 	db.collection("items").find({name: "group_entry"}, {projection: { _id: 0, groupid: 1}}).toArray(function(err, docs) {
 		if(err != null) {
@@ -49,12 +76,36 @@ function sendGroupListToClient(err, res) {
 			io.emit("updateGroupList", docs);
 		}
 	});
-}
+}*/
 
-io.on("connection", function(socket) {
+io.sockets.on("connection", function(socket) {
 	console.log("Somebody connected...");
 
-	socket.on("getGroups", function() {
+	/*Creating a room based on thr group selected*/
+	socket.on('create', function(room) {
+		//console.log("Group created!");
+		socket.leaveAll();
+		socket.join(room);
+		let rooms = Object.keys(socket.rooms);
+    	console.log(rooms);
+		//console.log(socket.rooms);
+	});
+
+	//console.log(socket.rooms);
+
+	socket.on("getGroupCollections", function() {
+		db.listCollections().toArray(function(err, cols) {
+			if(err != null) {
+				console.log("ERROR: " + err);
+			}
+			else {
+				//groupArray = cols;
+				io.emit("updateGroupList", cols);
+			}
+		});
+	});
+
+/*	socket.on("getGroups", function() {
 		db.collection("items").find({name: "group_entry"}, {projection: { _id: 0, groupid: 1}}).toArray(function(err, docs) {
 			if(err != null) {
 				console.log("ERROR: " + err);
@@ -65,9 +116,14 @@ io.on("connection", function(socket) {
 				socket.emit("updateGroupList", docs);
 			}
 		});
+	});*/
+
+	socket.on("addNewGroup", function(newGroupFromClient) {
+		clientGroup = newGroupFromClient
+		db.createCollection(newGroupFromClient, sendGroupListToClient);
 	});
 
-	socket.on("createGroupEntry", function(newGroupFromClient) {
+/*	socket.on("createGroupEntry", function(newGroupFromClient) {
 		clientGroup = newGroupFromClient;
 		let objToInsert = {
 			name: "group_entry",
@@ -79,9 +135,22 @@ io.on("connection", function(socket) {
 			comments: "Group entry for memory"
 		}
 		db.collection("items").insertOne(objToInsert, sendItemListToClient);
+	});*/
+
+	socket.on("getGroupItems", function(group) {
+		db.collection(group).find({}).toArray(function(err, docs) {
+			if (err!=null) {
+				console.log("ERROR: " + err);
+			}
+			else {
+				console.log("Sending the requested group's item list to the client - getGroupItems");
+				io.sockets.in(group).emit('updateItemList', docs);
+				//socket.emit("updateItemList", docs);
+			}
+		});
 	});
 
-	socket.on("getGroupItems", function(group) {									//"Request Refresh Call"
+/*	socket.on("getGroupItems", function(group) {									//"Request Refresh Call"
 		db.collection("items").find({name: { $ne: "group_entry" }, groupid: group}).toArray(function(err, docs) {
 			if (err!=null) {
 				console.log("ERROR: " + err);
@@ -91,9 +160,10 @@ io.on("connection", function(socket) {
 				socket.emit("updateItemList", docs);
 			}
 		});
-	});
+	});*/
 
-	socket.on("getAllItems", function() {											//"Request Refresh Call"
+
+/*	socket.on("getAllItems", function() {											//"Request Refresh Call"
 		db.collection("items").find({}).toArray(function(err, docs) {
 			if (err!=null) {
 				console.log("ERROR: " + err);
@@ -102,16 +172,18 @@ io.on("connection", function(socket) {
 				socket.emit("updateItemList", docs);
 			}
 		});
-	});
+	});*/
 
-	socket.on("togglePriority", function(id, priority) {
+	socket.on("togglePriority", function(group, id, priority) {
+		clientGroup = group;
 		console.log(oppositeBool(priority));
-		db.collection("items").updateOne({_id: ObjectID(id)}, { $set: { priority: oppositeBool(priority)}}, sendItemListToClient);
+		db.collection(group).updateOne({_id: ObjectID(id)}, { $set: { priority: oppositeBool(priority)}}, sendItemListToClient);
 	});
 
-	socket.on("togglePurchased", function(id, purchased) {
+	socket.on("togglePurchased", function(group, id, purchased) {
+		clientGroup = group;
 		console.log("Toggling the purchased field of " + id + "and purchased should become "+ oppositeBool(purchased));
-		db.collection("items").updateOne({_id: ObjectID(id)}, { $set: { purchased: oppositeBool(purchased) }}, sendItemListToClient);
+		db.collection(group).updateOne({_id: ObjectID(id)}, { $set: { purchased: oppositeBool(purchased) }}, sendItemListToClient);
 	});
 
 	socket.on("receiveItemFromClient", function(group, name, quantity, comments, priority) {
@@ -124,15 +196,17 @@ io.on("connection", function(socket) {
 			purchased: false,
 			comments: comments
 		}
-		db.collection("items").insertOne(objToInsert, sendItemListToClient);
+		clientGroup = group;
+		db.collection(group).insertOne(objToInsert, sendItemListToClient);
 		//insertNewItem("items", objToInsert);
 		console.log("item inserted");
 		//db.close();
 	});
 
-	socket.on("editItem", function(id, name, quantity, comments, priority) {
+	socket.on("editItem", function(group, id, name, quantity, comments, priority) {
+		clientGroup = group;
 		console.log(id + " "+name+" "+quantity+" "+comments+" "+priority);
-		db.collection("items").updateOne({_id: ObjectID(id)}, {$set: {
+		db.collection(group).updateOne({_id: ObjectID(id)}, {$set: {
 			name: name,
 			quantity: quantity,
 			comments: comments,
@@ -142,17 +216,25 @@ io.on("connection", function(socket) {
 		console.log("Item updated");
 	});
 
-	socket.on("deleteItem", function(id) {
-		db.collection("items").removeOne({_id: ObjectID(id)}, sendItemListToClient);
+	socket.on("deleteItem", function(group, id) {
+		clientGroup = group;
+		db.collection(group).removeOne({_id: ObjectID(id)}, sendItemListToClient);
 	});
 
-	socket.on("removePurchased", function() {
-		db.collection("items").remove({purchased: true}, sendItemListToClient);
+	socket.on("removePurchased", function(group) {
+		clientGroup = group;
+		console.log(group);	
+		db.collection(group).deleteMany({purchased: true}, sendItemListToClient);
 	});
 
 	socket.on("deleteGroup", function(group) {
-		db.collection("items").remove({groupid: group}, sendGroupListToClient);
+		clientGroup = group;
+		db.collection(group).drop(sendGroupListToClient);
 	});
+
+/*	socket.on("deleteGroup", function(group) {
+		db.collection("items").remove({groupid: group}, sendGroupListToClient);
+	});*/
 
 	socket.on("disconnect", function() {
 		console.log("Somebody disconnected.");

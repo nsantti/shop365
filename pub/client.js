@@ -11,6 +11,8 @@ var currentItem;
 
 var purchasedCount;
 
+socket.on()
+
 socket.on("updateGroupList", function(groupArrayFromServer) {
     allGroups = groupArrayFromServer;
     console.log(groupArrayFromServer);
@@ -23,7 +25,7 @@ socket.on("updateGroupList", function(groupArrayFromServer) {
         var z;
         for(z of allGroups) {
             let g = z;
-            $('#groupSelector').append('<option value='+g.groupid+'>'+retrieve(g.groupid)+'</option>');
+            $('#groupSelector').append('<option value='+g.name+'>'+retrieve(g.name)+'</option>');
         }
     }
     else {
@@ -58,7 +60,7 @@ socket.on("updateItemList", function(itemArrayFromServer) {
 
 
        pb.click(function() {
-            socket.emit("togglePriority", t._id, t.priority);
+            socket.emit("togglePriority", group, t._id, t.priority);
             console.log(t.name + " " + t.priority);
         });
         
@@ -95,7 +97,7 @@ socket.on("updateItemList", function(itemArrayFromServer) {
 
         $("."+t._id).click(function() {
             console.log("The item you are sending to the server is "+t.name+" and the purchased boolean is "+t.purchased);
-            socket.emit("togglePurchased", t._id, t.purchased);
+            socket.emit("togglePurchased", group, t._id, t.purchased);
         });
 
     }
@@ -122,7 +124,7 @@ function updateClickHandlers() {
     $("#confirmDeleteItemButton").click(function() {
         $("#mainView").show();
         $("#confirmDeleteModal").hide();
-        socket.emit("deleteItem", currentItem._id);
+        socket.emit("deleteItem", group, currentItem._id);
     });
     //Nick added these
     $("#cancelDeleteAllItemsButton").click(function() {
@@ -133,24 +135,22 @@ function updateClickHandlers() {
     $("#confirmDeleteAllItemsButton").click(function() {
         $("#mainView").show();
         $("#confirmDeleteAllModal").hide();
-        socket.emit("removePurchased");
+        socket.emit("removePurchased", group);
     });
 
 }
 
 function startItAll() {
 
-    //changeGroupModal
-    //generateGroupButton
-    //createGroupButton
-    socket.emit("getGroups");
+   // socket.emit("getGroups");
+    socket.emit("getGroupCollections");
 
-    if(typeof(group) === 'undefined') {     //All items are loaded and then filtered when group is specified
+   /* if(typeof(group) === 'undefined') {     //All items are loaded and then filtered when group is specified
         socket.emit("getAllItems");
     }
     else {
         socket.emit("getGroupItems", cleanString(group));
-    }
+    }*/
 
     $("#changeGroupModal").show();
     $("#mainView").hide();
@@ -199,6 +199,7 @@ function startItAll() {
         }
         else {
             socket.emit("editItem",    //id, name, quantity, comments, priority
+                group,
                 $("#storeItemID").val(),
                 cleanString($("#editModalItemName").val()),
                 $("#editModalItemQuantity").val(),
@@ -216,6 +217,7 @@ function startItAll() {
         //group = $("#changeGroupText").val();
         console.log(cleanString(group));
         //socket.emit("getAllItems");
+        socket.emit('create', group);
         socket.emit("getGroupItems", cleanString(group));
         //TODO: handle the group value
         $("#changeGroupModal").hide();
@@ -225,8 +227,8 @@ function startItAll() {
     $("#generateGroupButton").click(function () {
         group = prompt("Please enter a new group name");
         //TODO: handle the group generation
-        socket.emit("createGroupEntry", cleanString(group));
-        //socket.emit("getGroupItems", cleanString(group));
+        socket.emit("addNewGroup", cleanString(group));
+        socket.emit("getGroupItems", cleanString(group));
         $("#changeGroupModal").hide();
         $("#mainView").show();
     });
