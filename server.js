@@ -26,7 +26,7 @@ app.use(express.static("pub"));
 
 function sendItemListToClient(err, res) {
 	console.log("Sending item list to client");
-	db.collection("items").find({name: { $ne: "group_entry" }, groupid: clientGroup}).toArray(function(err, docs) {
+	db.collection("items").find({name: { $ne: "group_entry" }}).toArray(function(err, docs) {
 		if (err!=null) {
 			console.log("ERROR: " + err);
 		}
@@ -38,7 +38,7 @@ function sendItemListToClient(err, res) {
 
 function sendGroupListToClient(err, res) {
 	console.log("sending group list to client");
-	db.collection("items").distinct('groupid').toArray(function(err, docs) {
+	db.collection("items").find({name: "group_entry"}, {projection: { _id: 0, groupid: 1}}).toArray(function(err, docs) {
 		if(err != null) {
 			console.log("ERROR: " + err);
 		}
@@ -54,7 +54,7 @@ io.on("connection", function(socket) {
 	console.log("Somebody connected...");
 
 	socket.on("getGroups", function() {
-		db.collection("items").find({}, {projection: { groupid: 1}}).toArray(function(err, docs) {
+		db.collection("items").find({name: "group_entry"}, {projection: { _id: 0, groupid: 1}}).toArray(function(err, docs) {
 			if(err != null) {
 				console.log("ERROR: " + err);
 			}
