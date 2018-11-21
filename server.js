@@ -30,7 +30,7 @@ function sendItemListToClient(err, res) {
 			console.log("ERROR: " + err);
 		}
 		else {
-			console.log("Sending the requested group's item list to the client - sendItemListToClient");
+			//console.log("Sending the requested group's item list to the client - sendItemListToClient");
 			//io.sockets.in(clientGroup).emit('updateItemList', docs);
 			io.emit("updateItemList", docs);
 			//clientGroup = "";
@@ -84,10 +84,10 @@ io.sockets.on("connection", function(socket) {
 	/*Creating a room based on thr group selected*/
 	socket.on('create', function(room) {
 		//console.log("Group created!");
+		console.log("Here is the room situation");
 		socket.leaveAll();
 		socket.join(room);
-		let rooms = Object.keys(socket.rooms);
-    	console.log(rooms);
+    	console.log(io.sockets.adapter.rooms);
 		//console.log(socket.rooms);
 	});
 
@@ -143,7 +143,7 @@ io.sockets.on("connection", function(socket) {
 				console.log("ERROR: " + err);
 			}
 			else {
-				console.log("Sending the requested group's item list to the client - getGroupItems");
+				//console.log("Sending the requested group's item list to the client - getGroupItems");
 				io.sockets.in(group).emit('updateItemList', docs);
 				//socket.emit("updateItemList", docs);
 			}
