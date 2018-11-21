@@ -144,8 +144,8 @@ io.sockets.on("connection", function(socket) {
 			}
 			else {
 				//console.log("Sending the requested group's item list to the client - getGroupItems");
-				io.sockets.in(group).emit('updateItemList', docs);
-				//socket.emit("updateItemList", docs);
+				//io.sockets.in(group).emit('updateItemList', docs);
+				socket.emit("updateItemList", docs);
 			}
 		});
 	});
