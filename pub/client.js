@@ -68,7 +68,6 @@ var currentSort;
 function updateGUI(arr) {
     $("#table-body").html("");
     items = sortList(arr);
-    console.log(items);
     purchasedCount = 0;
     for (i of items) {
         let t = i;
@@ -117,6 +116,7 @@ function updateGUI(arr) {
 
         $("." + t._id).click(function () {
             //console.log("The item you are sending to the server is " + t.name + " and the purchased boolean is " + t.purchased);
+            console.log("Toggling purchased");
             socket.emit("togglePurchased", group, t._id, t.purchased);
         });
 
@@ -130,11 +130,14 @@ socket.on("updateItemList", function(items) {
     $("#table-body").html("");
     $("#groupID").text(retrieve(group).toUpperCase());
     $("#date").text(makeDate());
+    console.log("Item array coming from server")
+    console.log(items);
     updateGUI(items);
 });
 
 socket.on("forceClientCall", function(w) {
-    socket.emit("getGroupItems", group);
+    console.log("forceClientCall");
+    socket.emit("getGroupItems", cleanString(group));
 });
 
 socket.on("forceOutOfList", function(w) {
@@ -287,9 +290,10 @@ function startItAll() {
 
     $("#generateGroupButton").click(function () {
         group = prompt("Please enter a new group name");
+        group = cleanString(group);
         //TODO: handle the group generation
-        socket.emit("addNewGroup", cleanString(group));
         socket.emit("changeRoom", group);
+        socket.emit("addNewGroup", group);
         //socket.emit("getGroupItems", cleanString(group));
         $("#changeGroupModal").hide();
         $("#mainView").show();

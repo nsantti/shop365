@@ -45,6 +45,7 @@ function sendGroupListToClient() {
 		}
 		else {
 			//groupArray = cols;
+			cols.sort(compareGroups);
 			io.emit("updateGroupList", cols);
 		}
 	});
@@ -105,7 +106,9 @@ io.sockets.on("connection", function(socket) {
 	});*/
 
 	socket.on("getGroupItems", function(group) {
+		console.log("Fetching the items for " + group);
 		db.collection(group).find({}).toArray(function(err, docs) {
+			console.log(docs);
 			if (err!=null) {
 				console.log("ERROR: " + err);
 			}
@@ -124,6 +127,7 @@ io.sockets.on("connection", function(socket) {
 	});
 
 	socket.on("togglePurchased", function(group, id, purchased) {
+		console.log(group + " " + id + " " + purchased);
 		clientGroup = group;
 		console.log("Toggling the purchased field of " + id + "and purchased should become "+ oppositeBool(purchased));
 		db.collection(group).updateOne({_id: ObjectID(id)}, { $set: { purchased: oppositeBool(purchased) }}, function() {
