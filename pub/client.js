@@ -8,13 +8,13 @@ var clientItemArray = [];
 
 var currentItem;
 
-var purchasedCount;
+var purchasedCount = 0;
 
 socket.on()
 
-/*socket.on("updateGroupList", function(groupArrayFromServer) {
+socket.on("updateGroupList", function(groupArrayFromServer) {
     allGroups = groupArrayFromServer;
-    console.log(groupArrayFromServer);
+    //console.log(groupArrayFromServer);
    // console.log(allGroups);
     //console.log(allGroups[0].groupid);
     $("#groupSelector").html("");
@@ -31,7 +31,7 @@ socket.on()
         $('#createGroupButton').prop('disabled',true).css('opacity',0.5);
         $('#groupSelector').append('<option>No Groups Available</option>');
     }
-});*/
+});
 
 /*socket.on("updateItemList", function(itemArrayFromServer) {
     clientItemArray = itemArrayFromServer;
@@ -49,7 +49,8 @@ socket.on()
 
     var i;
     for(i of clientItemArray) {*/
-let group = "test_group";
+
+//let group = "test_group";
 
 var currentItem;
 
@@ -63,15 +64,13 @@ var sortingType = {
 }
 
 var currentSort;
-/*socket.on("displayItemFromServer", function (name, quantity, comment, priority) {
-    console.log("NAME: " + name + "\nQUANTITY: " + quantity + "\nCOMMENT: " + comment + "\nPRIORITY: " + priority);
-});*/
 
 function updateGUI(arr) {
     $("#table-body").html("");
     items = sortList(arr);
     console.log(items);
     for (i of items) {
+        purchasedCount = 0;
         let t = i;
         var h = $("<tr id='" + t._id + "' class='table-item'><td></td><td class='" + t._id + "'>" + retrieve(t.name) + "</td><td class='" + t._id + "'>" + t.quantity + "</td><td class='" + t._id + "'>" + t.comments + "</td><td></td></tr>");
         var priorityButtonClass = t.priority ? 'truePriorityButton' : 'falsePriorityButton';
@@ -82,7 +81,7 @@ function updateGUI(arr) {
 
 
         pb.click(function () {
-            socket.emit("togglePriority", t._id, t.priority);
+            socket.emit("togglePriority", group, t._id, t.priority);
             console.log(t.name + " " + t.priority);
         });
 
@@ -108,16 +107,17 @@ function updateGUI(arr) {
         $("#table-body").append(h);
 
         if (t.purchased == true) {
-            console.log("Changing background color to green");
+            purchasedCount++;
+            //console.log("Changing background color to gray");
             $("#" + t._id).css("background-color", "#7c7c7c");
         } else {
-            console.log("Changing the background color to blue");
+           // console.log("Changing the background color to blue");
             $("#" + t._id).css("background-color", "#90AFC5");
         }
 
         $("." + t._id).click(function () {
-            console.log("The item you are sending to the server is " + t.name + " and the purchased boolean is " + t.purchased);
-            socket.emit("togglePurchased", t._id, t.purchased);
+            //console.log("The item you are sending to the server is " + t.name + " and the purchased boolean is " + t.purchased);
+            socket.emit("togglePurchased", group, t._id, t.purchased);
         });
 
     }
@@ -168,18 +168,6 @@ function updateClickHandlers() {
         $("#confirmDeleteAllModal").hide();
         socket.emit("removePurchased", group);
     });
-
-    $("#cancelDeleteAllItemsButton").click(function () {
-        $("#mainView").show();
-        $("#confirmDeleteAllModal").hide();
-    });
-
-    $("#confirmDeleteAllItemsButton").click(function () {
-        $("#mainView").show();
-        $("#confirmDeleteAllModal").hide();
-        socket.emit("removePurchased");
-    });
-
 }
 
 //Nate
@@ -261,6 +249,7 @@ function startItAll() {
             //TODO: Handle bad quantity input
         } else {
             socket.emit("editItem", //id, name, quantity, comments, priority
+                group,
                 $("#storeItemID").val(),
                 cleanString($("#editModalItemName").val()),
                 $("#editModalItemQuantity").val(),
@@ -274,7 +263,7 @@ function startItAll() {
     });
 
     $("#createGroupButton").click(function () {
-        let temp = $("#changeGroupText").val().toLowerCase();
+        let temp = $("#groupSelector").val().toLowerCase();
         if (temp == '') {
             group = 'test_group'; 
         }
