@@ -124,7 +124,7 @@ io.sockets.on("connection", function(socket) {
 			}
 			else {
 				//console.log("Sending the requested group's item list to the client - getGroupItems");
-				io.sockets.in(group).emit('updateItemList', docs);
+				io.in(socket.room).emit("forceClientCall");
 				//socket.emit("updateItemList", docs);
 			}
 		});

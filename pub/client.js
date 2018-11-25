@@ -69,8 +69,8 @@ function updateGUI(arr) {
     $("#table-body").html("");
     items = sortList(arr);
     console.log(items);
+    purchasedCount = 0;
     for (i of items) {
-        purchasedCount = 0;
         let t = i;
         var h = $("<tr id='" + t._id + "' class='table-item'><td></td><td class='" + t._id + "'>" + retrieve(t.name) + "</td><td class='" + t._id + "'>" + t.quantity + "</td><td class='" + t._id + "'>" + t.comments + "</td><td></td></tr>");
         var priorityButtonClass = t.priority ? 'truePriorityButton' : 'falsePriorityButton';
@@ -320,18 +320,7 @@ function startItAll() {
             alert("No items selected!");
         }
     });
-}
 
-
-function clearAllInputFields() {
-    $("#modalItemName").val("");
-    $("#modalItemQuantity").val(1);
-    $("#modalItemComment").val("");
-    $("#modalItemPriority").prop('checked', false);
-    $("#editItemCancel").click(function () {
-        $("#mainView").show();
-        $("#editItemModal").hide();
-    });
 
   /*  $("#removeAllButton").click(function () {
         //socket.emit("removePurchased");
