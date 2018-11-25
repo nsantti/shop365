@@ -142,7 +142,7 @@ socket.on("forceOutOfList", function(w) {
     $("#mainView").hide();
     $("#addItemModal").hide();
     $("#confirmDeleteAllModal").hide();
-    alert("The group has been deleted by another member");
+    //alert("The group has been deleted by another member");
 });
 
 //Nate
