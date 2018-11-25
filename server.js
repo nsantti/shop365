@@ -24,49 +24,50 @@ app.use(express.static("pub"));
 
 function sendItemListToClient(err, res) {
 	console.log("Sending item list to client");
-	db.collection("items").find({}).toArray(function(err, docs) {
-		if (err!=null) {
-			console.log("ERROR: " + err);
-		}
-		else {
-			io.emit("updateItemList", docs);
-		}
-	});
+	// db.collection("items").find({}).toArray(function(err, docs) {
+	// 	if (err!=null) {
+	// 		console.log("ERROR: " + err);
+	// 	}
+	// 	else {
+	// 		io.emit("updateItemList", docs);
+	// 	}
+	// });
+	io.emit("forceClientCall", 'forcing');
 }
 
 io.on("connection", function(socket) {
 	console.log("Somebody connected...");
 
-	socket.on("getGroupItems", function() {											//"Request Refresh Call"
-		db.collection("items").find({}).toArray(function(err, docs) {
+	socket.room = 'test_group';
+	socket.join('test_group');
+
+	socket.on("getGroupItems", function(room) {											//"Request Refresh Call"
+		db.collection("items").find({groupid: room}).toArray(function(err, docs) {
 			if (err!=null) {
 				console.log("ERROR: " + err);
 			}
 			else {
-				socket.emit("updateItemList", docs);
+				// socket.emit("updateItemList", docs);
+				io.in(room).emit("updateItemList", docs);
 			}
 		});
 	});
 
 	socket.on("togglePriority", function(id, priority) {
 		console.log(oppositeBool(priority));
-		db.collection("items").updateOne({_id: ObjectID(id)}, { $set: { priority: oppositeBool(priority)}}, sendItemListToClient);
+		db.collection("items").updateOne({_id: ObjectID(id)}, { $set: { priority: oppositeBool(priority)}}, function() {
+			io.in(socket.room).emit("forceClientCall");
+		});
 	});
 
 	socket.on("togglePurchased", function(id, purchased) {
 		console.log("Toggling the purchased field of " + id + "and purchased should become "+ oppositeBool(purchased));
-		db.collection("items").updateOne({_id: ObjectID(id)}, { $set: { purchased: oppositeBool(purchased) }}, sendItemListToClient);
+		db.collection("items").updateOne({_id: ObjectID(id)}, { $set: { purchased: oppositeBool(purchased) }}, function() {
+			io.in(socket.room).emit("forceClientCall");
+		});
 	});
 
-	/*socket.on("purchaseItem", function(id, purchased) {
-		console.log("Item was purchased");
-		db.collection("items").updateOne({_id: ObjectID(id)}, { $set: { purchased: purchased }});
-	});
-
-	socket.on("unPurchaseItem", function(id, purchased) {
-		console.log("Item was un-purchased");
-		db.collection("items").updateOne({_id: ObjectID(id)}, { $set: { purchased: purchased }});
-	});*/
+	
 
 	socket.on("receiveItemFromClient", function(group, name, quantity, comments, priority) {
 		let objToInsert = {
@@ -78,7 +79,9 @@ io.on("connection", function(socket) {
 			purchased: false,
 			comments: comments
 		}
-		db.collection("items").insertOne(objToInsert, sendItemListToClient);
+		db.collection("items").insertOne(objToInsert, function() {
+			io.in(socket.room).emit("forceClientCall");
+		});
 		//insertNewItem("items", objToInsert);
 		console.log("item inserted");
 		//db.close();
@@ -91,17 +94,28 @@ io.on("connection", function(socket) {
 			quantity: quantity,
 			comments: comments,
 			priority: priority
-		}}, 
-			sendItemListToClient);
+		}}, function() {
+			io.in(socket.room).emit("forceClientCall");
+		});
 		console.log("Item updated");
 	});
 
 	socket.on("deleteItem", function(id) {
-		db.collection("items").removeOne({_id: ObjectID(id)}, sendItemListToClient);
+		db.collection("items").removeOne({_id: ObjectID(id)}, function() {
+			io.in(socket.room).emit("forceClientCall");
+		});
 	});
 
 	socket.on("disconnect", function() {
 		console.log("Somebody disconnected.");
+	});
+
+	socket.on("changeRoom", function(newRoom) {
+		socket.leave(socket.room);
+		socket.room = newRoom;
+		socket.join(socket.room);
+		socket.emit("forceClientCall", 'forcing a call to the update function');
+		console.log("Current room: " + socket.room);
 	});
 	
 });

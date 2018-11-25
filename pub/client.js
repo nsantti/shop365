@@ -1,6 +1,6 @@
 var socket = io();
 
-var group = "test_group";
+let group = "test_group";
 
 var currentItem;
 
@@ -20,10 +20,8 @@ var currentSort;
 
 function updateGUI(arr) {
     $("#table-body").html("");
-    console.log("BEFORE SORT " + arr[0].name);
     items = sortList(arr);
-    console.log("AFTER SORT " + arr[0].name);
-
+    console.log(items);
     for (i of items) {
         let t = i;
         var h = $("<tr id='" + t._id + "' class='table-item'><td></td><td class='" + t._id + "'>" + retrieve(t.name) + "</td><td class='" + t._id + "'>" + t.quantity + "</td><td class='" + t._id + "'>" + t.comments + "</td><td></td></tr>");
@@ -77,12 +75,16 @@ function updateGUI(arr) {
 
     updateClickHandlers();
 }
-socket.on("updateItemList", function (items) {
+
+socket.on("updateItemList", function(items) {
     $("#table-body").html("");
-    $("#groupID").text(retrieve(group));
+    $("#groupID").text(retrieve(group).toUpperCase());
     $("#date").text(makeDate());
     updateGUI(items);
+});
 
+socket.on("forceClientCall", function(w) {
+    socket.emit("getGroupItems", group);
 });
 
 //Nate
@@ -146,9 +148,10 @@ function startItAll() {
     //createGroupButton
 
     if (typeof (group) === 'undefined') { //All items are loaded and then filtered when group is specified
-        socket.emit("getAllItems");
+        //socket.emit("getAllItems");
+        console.log("ERRORR ERRORR EORR")
     } else {
-        socket.emit("getGroupItems", cleanString(group));
+        socket.emit("getGroupItems", group);
     }
 
     $("#changeGroupModal").show();
@@ -209,10 +212,15 @@ function startItAll() {
     });
 
     $("#createGroupButton").click(function () {
-        group = $("#changeGroupText").val();
-        console.log(cleanString(group));
-        //socket.emit("getAllItems");
-        socket.emit("getGroupItems", cleanString(group));
+        let temp = $("#changeGroupText").val().toLowerCase();
+        if (temp == '') {
+            group = 'test_group'; 
+        }
+        else {
+            group = cleanString(temp);
+        } 
+        socket.emit("changeRoom", group);
+        socket.emit("getGroupItems", group);
         //TODO: handle the group value
         $("#changeGroupModal").hide();
         $("#mainView").show();
@@ -269,8 +277,10 @@ function startItAll() {
         $("#table-priority").css('background-color', '#66a0c9');
         $("#table-quantity").css('background-color', '#90AFC5');
         updateGUI(items);
-    })
+    });
 }
+
+
 
 function getModalItemPriority() {
     return $("#modalItemPriority").prop('checked');
