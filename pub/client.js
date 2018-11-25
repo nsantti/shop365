@@ -2,7 +2,7 @@ var socket = io();
 
 var allGroups = [];
 
-var group = "No Group Selected";
+let group = "No Group Selected";
 
 var clientItemArray = [];
 
