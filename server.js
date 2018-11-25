@@ -40,6 +40,7 @@ io.on("connection", function(socket) {
 
 	socket.room = 'test_group';
 	socket.join('test_group');
+	//console.log(io.sockets.adapter.rooms);
 
 	socket.on("getGroupItems", function(room) {											//"Request Refresh Call"
 		db.collection("items").find({groupid: room}).toArray(function(err, docs) {
