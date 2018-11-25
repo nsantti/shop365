@@ -2,7 +2,7 @@ var socket = io();
 
 var allGroups = [];
 
-let group = "No Group Selected";
+let group = "no_group_found";
 
 var clientItemArray = [];
 
@@ -135,6 +135,14 @@ socket.on("updateItemList", function(items) {
 
 socket.on("forceClientCall", function(w) {
     socket.emit("getGroupItems", group);
+});
+
+socket.on("forceOutOfList", function(w) {
+    $("#changeGroupModal").show();
+    $("#mainView").hide();
+    $("#addItemModal").hide();
+    $("#confirmDeleteAllModal").hide();
+    alert("The group has been deleted by another member");
 });
 
 //Nate
@@ -271,7 +279,7 @@ function startItAll() {
             group = cleanString(temp);
         } 
         socket.emit("changeRoom", group);
-        socket.emit("getGroupItems", group);
+        //socket.emit("getGroupItems", group);
         //TODO: handle the group value
         $("#changeGroupModal").hide();
         $("#mainView").show();
@@ -281,7 +289,8 @@ function startItAll() {
         group = prompt("Please enter a new group name");
         //TODO: handle the group generation
         socket.emit("addNewGroup", cleanString(group));
-        socket.emit("getGroupItems", cleanString(group));
+        socket.emit("changeRoom", group);
+        //socket.emit("getGroupItems", cleanString(group));
         $("#changeGroupModal").hide();
         $("#mainView").show();
     });
