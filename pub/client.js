@@ -136,7 +136,7 @@ socket.on("updateItemList", function(items) {
 });
 
 socket.on("forceClientCall", function(w) {
-    console.log("forceClientCall");
+    //console.log("forceClientCall");
     socket.emit("getGroupItems", cleanString(group));
 });
 

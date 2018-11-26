@@ -25,7 +25,7 @@ var io = socketio(server);
 app.use(express.static("pub"));
 
 
-function sendItemListToClient(err, res) {
+/*function sendItemListToClient(err, res) {
 	console.log("Sending item list to client");
 	io.emit("forceClientCall", 'forcing');
 	// db.collection("items").find({}).toArray(function(err, docs) {
@@ -36,7 +36,7 @@ function sendItemListToClient(err, res) {
 	// 		io.emit("updateItemList", docs);
 	// 	}
 	// });
-}
+}*/
 
 function sendGroupListToClient() {
 	db.listCollections().toArray(function(err, cols) {
@@ -176,8 +176,12 @@ io.sockets.on("connection", function(socket) {
 
 	socket.on("removePurchased", function(group) {
 		clientGroup = group;
+		console.log("Removing the purchased items for " + group);
 		console.log(group);	
-		db.collection(group).deleteMany({purchased: true}, sendItemListToClient);
+		//db.collection(group).deleteMany({purchased: true}, sendItemListToClient);
+		db.collection(group).deleteMany({purchased: true}, function() {
+			io.in(socket.room).emit("forceClientCall");
+		});
 	});
 
 	socket.on("deleteGroup", function(group) {
