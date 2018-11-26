@@ -12,23 +12,23 @@ var purchasedCount = 0;
 
 socket.on()
 
-socket.on("updateGroupList", function(groupArrayFromServer) {
+socket.on("updateGroupList", function (groupArrayFromServer) {
     allGroups = groupArrayFromServer;
     //console.log(groupArrayFromServer);
-   // console.log(allGroups);
+    // console.log(allGroups);
     //console.log(allGroups[0].groupid);
     $("#groupSelector").html("");
-    
-    if(allGroups.length != 0) {
-        $('#createGroupButton').prop('disabled',false).css('opacity',1);
+
+    if (allGroups.length != 0) {
+        $('#createGroupButton').prop('disabled', false).css('opacity', 1);
         var z;
-        for(z of allGroups) {
+        for (z of allGroups) {
             let g = z;
-            $('#groupSelector').append('<option value='+g.name+'>'+retrieve(g.name)+'</option>');
+            $('#groupSelector').append('<option value=' + g.name + '>' + retrieve(g.name) + '</option>');
         }
     }
     else {
-        $('#createGroupButton').prop('disabled',true).css('opacity',0.5);
+        $('#createGroupButton').prop('disabled', true).css('opacity', 0.5);
         $('#groupSelector').append('<option>No Groups Available</option>');
     }
 });
@@ -91,7 +91,7 @@ function updateGUI(arr) {
             //console.log("Changing background color to gray");
             $("#" + t._id).css("background-color", "#7c7c7c");
         } else {
-           // console.log("Changing the background color to blue");
+            // console.log("Changing the background color to blue");
             $("#" + t._id).css("background-color", "#90AFC5");
         }
 
@@ -107,7 +107,7 @@ function updateGUI(arr) {
     updateClickHandlers();
 }
 
-socket.on("updateItemList", function(items) {
+socket.on("updateItemList", function (items) {
     $("#table-body").html("");
     $("#groupID").text(retrieve(group).toUpperCase());
     $("#date").text(makeDate());
@@ -116,12 +116,12 @@ socket.on("updateItemList", function(items) {
     updateGUI(items);
 });
 
-socket.on("forceClientCall", function(w) {
+socket.on("forceClientCall", function (w) {
     //console.log("forceClientCall");
     socket.emit("getGroupItems", cleanString(group));
 });
 
-socket.on("forceOutOfList", function(w) {
+socket.on("forceOutOfList", function (w) {
     $("#changeGroupModal").show();
     $("#mainView").hide();
     $("#addItemModal").hide();
@@ -150,12 +150,12 @@ function updateClickHandlers() {
         socket.emit("deleteItem", group, currentItem._id);
     });
     //Nick added these
-    $("#cancelDeleteAllItemsButton").click(function() {
+    $("#cancelDeleteAllItemsButton").click(function () {
         $("#mainView").show();
         $("#confirmDeleteAllModal").hide();
     });
 
-    $("#confirmDeleteAllItemsButton").click(function() {
+    $("#confirmDeleteAllItemsButton").click(function () {
         $("#mainView").show();
         $("#confirmDeleteAllModal").hide();
         socket.emit("removePurchased", group);
@@ -186,7 +186,7 @@ function sortList(arr) {
 
 function startItAll() {
 
-   // socket.emit("getGroups");
+    // socket.emit("getGroups");
     socket.emit("getGroupCollections");
 
     if (typeof (group) === 'undefined') { //All items are loaded and then filtered when group is specified
@@ -212,15 +212,18 @@ function startItAll() {
     $("#addItemCancel").click(function () {
         $("#mainView").show();
         $("#addItemModal").hide();
+        $("#validateAddItemDiv").hide();
         clearAllInputFields();
     });
 
     $("#modalItemSubmit").click(function () {
         if (!validateName($("#modalItemName").val())) {
-            //TODO: Handle bad name input
-        } else if (!validateQuantity($("#modalItemQuantity").val())) {
-            //TODO: Handle bad quantity input
-        } else {
+            $("#validateAddItemDiv").show();
+        }
+        else if (!validateQuantity($("#modalItemQuantity").val())) {
+            $("#validateAddItemDiv").show();
+        }
+        else {
             socket.emit("receiveItemFromClient",
                 cleanString(group),
                 cleanString($("#modalItemName").val()),
@@ -230,6 +233,7 @@ function startItAll() {
             );
             $("#mainView").show();
             $("#addItemModal").hide();
+            $("#validateAddItemDiv").hide();
             clearAllInputFields();
         }
     });
@@ -257,11 +261,11 @@ function startItAll() {
     $("#createGroupButton").click(function () {
         let temp = $("#groupSelector").val().toLowerCase();
         if (temp == '') {
-            group = 'test_group'; 
+            group = 'test_group';
         }
         else {
             group = cleanString(temp);
-        } 
+        }
         socket.emit("changeRoom", group);
         //socket.emit("getGroupItems", group);
         //TODO: handle the group value
@@ -289,15 +293,15 @@ function startItAll() {
     });
 
     $("#deleteGroupButton").click(function () {
-        var delGroup = confirm("Are you sure you want to delete the '"+retrieve(group)+"' group and all of its items?");
-        if(delGroup == true) {
-           socket.emit("deleteGroup", cleanString(group));
+        var delGroup = confirm("Are you sure you want to delete the '" + retrieve(group) + "' group and all of its items?");
+        if (delGroup == true) {
+            socket.emit("deleteGroup", cleanString(group));
             $("#changeGroupModal").show();
             $("#mainView").hide();
         }
-       // $("#changeGroupModal").show();
-       // $("#mainView").hide();
-       // $("#addItemModal").hide();
+        // $("#changeGroupModal").show();
+        // $("#mainView").hide();
+        // $("#addItemModal").hide();
     });
 
     $("#editItemCancel").click(function () {
@@ -305,8 +309,8 @@ function startItAll() {
         $("#editItemModal").hide();
     });
 
-    $("#removeAllButton").click(function() {
-        if(purchasedCount > 0) {
+    $("#removeAllButton").click(function () {
+        if (purchasedCount > 0) {
             $("#confirmDeleteAllModal").show();
             $("#mainView").hide();
         }
@@ -316,11 +320,11 @@ function startItAll() {
     });
 
 
-  /*  $("#removeAllButton").click(function () {
-        //socket.emit("removePurchased");
-        $("#confirmDeleteAllModal").show();
-        $("#mainView").hide();
-    });*/
+    /*  $("#removeAllButton").click(function () {
+          //socket.emit("removePurchased");
+          $("#confirmDeleteAllModal").show();
+          $("#mainView").hide();
+      });*/
 
     $("#table-quantity").click(function () {
         currentSort = sortingType.quantity;
