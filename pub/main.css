@@ -303,3 +303,7 @@ td {
 #changeGroupButton {
     margin-top: 8px;
 }
+
+#storeItemID {
+    display: none;
+}
