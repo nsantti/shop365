@@ -33,25 +33,6 @@ socket.on("updateGroupList", function(groupArrayFromServer) {
     }
 });
 
-/*socket.on("updateItemList", function(itemArrayFromServer) {
-    clientItemArray = itemArrayFromServer;
-    purchasedCount = 0;
-    //console.log(items);
-    $("#table-body").html("");
-
-    //$("#groupID").text(retrieve(items[0].groupid));
-
-    if(typeof(group) !== 'undefined') {
-        $("#groupID").text(retrieve(group));
-    }
-
-    $("#date").text(formatDate(new Date()));
-
-    var i;
-    for(i of clientItemArray) {*/
-
-//let group = "test_group";
-
 var currentItem;
 
 var items = [];
