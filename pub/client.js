@@ -1,33 +1,99 @@
-
 var socket = io();
 
-socket.on("displayItemFromServer", function (name, quantity, comment, priority) {
+var group = "test_group";
+
+var currentItem;
+
+/*socket.on("displayItemFromServer", function (name, quantity, comment, priority) {
     console.log("NAME: " + name + "\nQUANTITY: " + quantity + "\nCOMMENT: " + comment + "\nPRIORITY: " + priority);
-});
-
-socket.on("getItemList", function (items) {
-    console.log(items);
-});
-
-/*socket.on("updateItemList", function (items) {
-    $("#groupID").text(retrieve(items[0].groupid));
-
-    let d = new Date();
-    $("#date").text(formatDate(d));
-
-    let i;
-    for (i of items) {
-        var h = $("<tr><td><input type='checkbox'/></td><td>" + retrieve(i.name) + "</td><td>" + i.quantity + "</td><td><input type='button' id='comments' value='Show Comments'/></td><td><input type='button' value='Menu'/></td></tr>");
-        $("#itemList").append(h);
-    }
-    //console.log(items);
 });*/
 
-function startItAll() {
+socket.on("updateItemList", function (items) {
+    $("#table-body").html("");
 
-    //changeGroupModal
-    //generateGroupButton
-    //createGroupButton
+    //$("#groupID").text(retrieve(items[0].groupid));
+
+    $("#groupID").text(retrieve(group));
+
+    $("#date").text(formatDate(new Date()));
+
+    var i;
+    for (i of items) {
+        let t = i;
+        var h = $("<tr id='" + t._id + "' class='table-item'><td></td><td class='" + t._id + "'>" + retrieve(t.name) + "</td><td class='" + t._id + "'>" + t.quantity + "</td><td class='" + t._id + "'>" + t.comments + "</td><td></td></tr>");
+        var priorityButtonClass = t.priority ? 'truePriorityButton' : 'falsePriorityButton';
+        var priorityText = t.priority ? "High" : "Low";
+        var pb = $("<button class=" + priorityButtonClass + " type='button'>" + priorityText + "</button>");
+        var editb = $("<button class='edit-button' type='button'>Edit</button>");
+        var delb = $("<button class='delete-button' type='button'>Delete</button>");
+
+
+        pb.click(function () {
+            socket.emit("togglePriority", t._id, t.priority);
+            console.log(t.name + " " + t.priority);
+        });
+
+
+        $(h.children()[0]).append(pb);
+        $(h.children()[4]).append(editb).append(delb);
+
+        editb.click(function () {
+            $("#storeItemID").val(t._id);
+            $("#editModalItemName").val(t.name);
+            $("#editModalItemQuantity").val(t.quantity);
+            $("#editModalItemComment").val(t.comments);
+            $("#editModalItemPriority").prop('checked', t.priority);
+            $("#mainView").hide();
+            $("#editItemModal").show();
+        });
+
+        delb.click(function () {
+            currentItem = t;
+        });
+
+        $("#table-body").append(h);
+
+        if (t.purchased == true) {
+            console.log("Changing background color to green");
+            $("#" + t._id).css("background-color", "#7c7c7c");
+        }
+        else {
+            console.log("Changing the background color to blue");
+            $("#" + t._id).css("background-color", "#90AFC5");
+        }
+
+        $("." + t._id).click(function () {
+            console.log("The item you are sending to the server is " + t.name + " and the purchased boolean is " + t.purchased);
+            socket.emit("togglePurchased", t._id, t.purchased);
+        });
+
+    }
+
+    updateClickHandlers();
+});
+
+//Nate
+function updateClickHandlers() {
+    $(".delete-button").click(function (event) {
+        $("#confirmDeleteModal").show();
+        $("#mainView").hide();
+        $("#deleteItemName").text(retrieve(currentItem.name));
+    });
+
+    $("#cancelDeleteItemButton").click(function () {
+        $("#mainView").show();
+        $("#confirmDeleteModal").hide();
+    });
+
+    $("#confirmDeleteItemButton").click(function () {
+        $("#mainView").show();
+        $("#confirmDeleteModal").hide();
+        socket.emit("deleteItem", currentItem._id);
+    });
+
+}
+
+function startItAll() {
 
     socket.emit("getAllItems");
     socket.emit("getGroupItems");
@@ -44,18 +110,20 @@ function startItAll() {
     $("#addItemCancel").click(function () {
         $("#mainView").show();
         $("#addItemModal").hide();
+        $("#validateAddItemDiv").hide();
         clearAllInputFields();
     });
 
     $("#modalItemSubmit").click(function () {
         if (!validateName($("#modalItemName").val())) {
-            //TODO: Handle bad name input
+            $("#validateAddItemDiv").show();
         }
         else if (!validateQuantity($("#modalItemQuantity").val())) {
-            //TODO: Handle bad quantity input
+            $("#validateAddItemDiv").show();
         }
         else {
             socket.emit("receiveItemFromClient",
+                group,
                 cleanString($("#modalItemName").val()),
                 $("#modalItemQuantity").val(),
                 $("#modalItemComment").val(),
@@ -63,31 +131,54 @@ function startItAll() {
             );
             $("#mainView").show();
             $("#addItemModal").hide();
+            $("#validateAddItemDiv").hide();
             clearAllInputFields();
         }
     });
 
     $("#createGroupButton").click(function () {
+        group = $("#groupSelector").val();
+        //group = $("#changeGroupText").val();
+        console.log(cleanString(group));
+        //socket.emit("getAllItems");
+        socket.emit("getGroupItems", cleanString(group));
         //TODO: handle the group value
         $("#changeGroupModal").hide();
         $("#mainView").show();
+        $("#changeGroupText").val("");
     });
 
-    $("#generateGroupButton").click(function () {
+    /*$("#createGroupButton").click(function () { // "GO" in change group modal
+        //TODO: handle the group value
+        $("#changeGroupModal").hide();
+        $("#mainView").show();
+        $("#changeGroupText").val("");
+    });*/
+
+    $("#generateGroupButton").click(function () { // "Generate group" button in modal window
         //TODO: handle the group generation
         $("#changeGroupModal").hide();
         $("#mainView").show();
+        $("#changeGroupText").val("");
     });
 
-    $("#changeGroupButton").click(function () {
-
+    $("#changeGroupButton").click(function () { // Button that displays the change group modal
         $("#changeGroupModal").show();
         $("#mainView").hide();
         $("#addItemModal").hide();
     });
-}
 
-$(startItAll);
+    $("#editItemCancel").click(function () {
+        $("#mainView").show();
+        $("#editItemModal").hide();
+    });
+
+    $("#editModalItemSubmit").click(function () {
+        //TODO: Update values of Item
+        $("#mainView").show();
+        $("#editItemModal").hide();
+    });
+}
 
 function getModalItemPriority() {
     return $("#modalItemPriority").prop('checked');
@@ -99,6 +190,10 @@ function clearAllInputFields() {
     $("#modalItemComment").val("");
     $("#modalItemPriority").prop('checked', false);
 }
+
+
+$(startItAll);
+
 
 function validateName(name) {
     return (name.replace(/\s/g, '').length > 0); //Return true if not empty string or not all whitespace
@@ -153,6 +248,13 @@ function formatDate(date) {
 function dateMillis(date) {
     return date.getTime();
 }
+
+function fixComment(comment) {
+    if (typeof (comment) === 'undefined') {
+        return "";
+    }
+}
+
 
 exports.cleanString = cleanString;
 exports.retrieve = retrieve;
