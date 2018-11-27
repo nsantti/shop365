@@ -124,6 +124,7 @@ td {
 
 #footer {
     text-align: center;
+    margin: 5px;
 }
 
 /* Generated with: https://www.bestcssbuttongenerator.com/#/7 */
@@ -271,7 +272,7 @@ td {
     display: none;
 }
 
-#confirmDeleteModal, #confirmDeleteAllModal {
+#confirmDeleteModal, #confirmDeleteAllModal, #confirmDeleteGroupModal, #createNewGroupModal{
     text-align: center;
     background-color: white;
     width: 400px;
@@ -306,4 +307,12 @@ td {
 
 #storeItemID {
     display: none;
+}
+
+#validateNewGroupDiv {
+    display: none;
+}
+
+#generateGroupButton {
+    margin-top: 25px;
 }

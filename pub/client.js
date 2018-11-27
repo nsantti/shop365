@@ -50,6 +50,7 @@ function updateGUI(arr) {
     $("#table-body").html("");
     items = sortList(arr);
     purchasedCount = 0;
+    $("#content").height(400 + 53*items.length);
     for (i of items) {
         let t = i;
         var h = $("<tr id='" + t._id + "' class='table-item'><td></td><td class='" + t._id + "'>" + retrieve(t.name) + "</td><td class='" + t._id + "'>" + t.quantity + "</td><td class='" + t._id + "'>" + t.comments + "</td><td></td></tr>");
@@ -160,6 +161,32 @@ function updateClickHandlers() {
         $("#confirmDeleteAllModal").hide();
         socket.emit("removePurchased", group);
     });
+
+    $("#cancelDeleteGroupButton").click(function() {
+        $("#mainView").show();
+        $("#confirmDeleteGroupModal").hide();
+    });
+
+    $("#confirmDeleteGroupButton").click(function() {
+        socket.emit("deleteGroup", cleanString(group));
+        $("#changeGroupModal").show();
+        $("#mainView").hide();
+        $("#confirmDeleteGroupModal").hide();
+    });
+
+    $("#deleteGroupButton").click(function () {
+        $("#deleteGroupName").text(retrieve(group));
+        $("#mainView").hide();
+        $("#confirmDeleteGroupModal").show();
+    });
+
+    $("#cancelCreateNewGroupButton").click(function() {
+        $("#createNewGroupModal").hide();
+        $("#changeGroupModal").show();
+        $("#validateNewGroupDiv").hide();
+    });
+
+    
 }
 
 //Nate
@@ -274,14 +301,33 @@ function startItAll() {
     });
 
     $("#generateGroupButton").click(function () {
-        group = prompt("Please enter a new group name");
-        group = cleanString(group);
-        //TODO: handle the group generation
-        socket.emit("changeRoom", group);
-        socket.emit("addNewGroup", group);
+        // group = prompt("Please enter a new group name");
+        // group = cleanString(group);
+        // //TODO: handle the group generation
+        // socket.emit("changeRoom", group);
+        // socket.emit("addNewGroup", group);
         //socket.emit("getGroupItems", cleanString(group));
+        $("#createNewGroupModal").show();
         $("#changeGroupModal").hide();
-        $("#mainView").show();
+        $("#mainView").hide();
+        $("#createNewGroupInput").val('');
+    });
+
+    $("#confirmCreateNewGroupButton").click(function() {
+        let newGroup = cleanString($("#createNewGroupInput").val());
+        //TODO: validate the newGroup variable
+        if (true) {
+            group = newGroup;
+            socket.emit("changeRoom", group);
+            socket.emit("addNewGroup", group);
+            socket.emit("getGroupItems", cleanString(group));
+            $("#createNewGroupModal").hide();
+            $("#mainView").show();
+        } else {
+            $("#validateNewGroupDiv").show();
+        }
+       
+
     });
 
     $("#changeGroupButton").click(function () {
@@ -292,17 +338,7 @@ function startItAll() {
         $("#addItemModal").hide();
     });
 
-    $("#deleteGroupButton").click(function () {
-        var delGroup = confirm("Are you sure you want to delete the '" + retrieve(group) + "' group and all of its items?");
-        if (delGroup == true) {
-            socket.emit("deleteGroup", cleanString(group));
-            $("#changeGroupModal").show();
-            $("#mainView").hide();
-        }
-        // $("#changeGroupModal").show();
-        // $("#mainView").hide();
-        // $("#addItemModal").hide();
-    });
+    
 
     $("#editItemCancel").click(function () {
         $("#mainView").show();
@@ -310,21 +346,10 @@ function startItAll() {
     });
 
     $("#removeAllButton").click(function () {
-        if (purchasedCount > 0) {
-            $("#confirmDeleteAllModal").show();
-            $("#mainView").hide();
-        }
-        else {
-            alert("No items selected!");
-        }
+        $("#confirmDeleteAllModal").show();
+        $("#mainView").hide();
     });
 
-
-    /*  $("#removeAllButton").click(function () {
-          //socket.emit("removePurchased");
-          $("#confirmDeleteAllModal").show();
-          $("#mainView").hide();
-      });*/
 
     $("#table-quantity").click(function () {
         currentSort = sortingType.quantity;
