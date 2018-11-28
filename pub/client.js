@@ -267,9 +267,9 @@ function startItAll() {
 
     $("#editModalItemSubmit").click(function () {
         if (!validateName($("#editModalItemName").val())) {
-            //TODO: Handle bad name input
+            $("#validateAddItemDiv").show();
         } else if (!validateQuantity($("#editModalItemQuantity").val())) {
-            //TODO: Handle bad quantity input
+            $("#validateAddItemDiv").show();
         } else {
             socket.emit("editItem", //id, name, quantity, comments, priority
                 group,
