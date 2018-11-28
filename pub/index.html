@@ -19,7 +19,8 @@
             <div id="header">
                 <div id="left-header">
                     Group: <span id="groupID">No Group Available</span>
-                    <button type="button" id="changeGroupButton" class="styledButton">Change group</button>
+                    <button type="button" id="changeGroupButton" class="styledButton">Change</button>
+                    <button type="button" id="deleteGroupButton" class="styledButton">Delete</button>
                 </div>
                 <div id="center-header">
                     Shop 365
@@ -32,6 +33,11 @@
                 <div id="form-header">
                     <button type="button" id="addItemButton" class="styledButton">
                         Add new item...
+                    </button>
+                </div>
+                <div id="footer">
+                    <button type="button" id="removeAllButton" class="styledButton">
+                        Remove all purchased items
                     </button>
                 </div>
                 <div id="form-table">
@@ -90,11 +96,7 @@
                     </table>
                 </div>
             </div>
-            <div id="footer">
-                <button type="button" id="removeAllButton" class="styledButton">
-                    Remove all purchased items
-                </button>
-            </div>
+            
         </div>
 
 
@@ -117,16 +119,50 @@
 
         <div id="changeGroupModal">
             <h1>Shop 365</h1>
-            <label for="changeGroupText">Enter Group Name:</label>
-            <input type="text" id="changeGroupText">
+            <label for="changeGroupText">Select Group Name:</label>
+            <select id="groupSelector">
+               <!-- <option value="Test Group">Test Group</option> -->  
+            </select>
+            <!--<input type="text" id="changeGroupText">-->
             <input type="submit" value="GO" id="createGroupButton">
             <div id="validateGroupDiv">
                 <br>
                 That group does not exist
             </div>
-            <div id="generateGroupButton">
-                <button type="button">Generate new group</button>
-            </div>
+            <!--<div id="generateGroup">
+                <button id="generateGroupButton" class="styledButton" type="button">Generate new group</button>
+            </div>-->
+            <br>
+            <button id="generateGroupButton" class="styledButton" type="button">Generate new group</button>
+        </div>
+
+        <div id="editItemModal">
+            <h1>Edit Item</h1>
+            <input type="text" name="itemID" id="storeItemID" style="display:none;" readonly>
+            Item Name: <input type="text" name="editItemName" id="editModalItemName">
+            <br><br>
+            Quantity: <input type="number" name="editItemQuantity" id="editModalItemQuantity" min="1" value="1">
+            <br><br>
+            Comments (optional): <input type="text" name="editItemComment" id="editModalItemComment">
+            <br><br>
+            Priority: <input type="checkbox" name="editItemPriority" id="editModalItemPriority">
+            <br><br>
+            <button type="button" id="editItemCancel">Cancel</button>
+            <input type="submit" name="editItemSubmit" id="editModalItemSubmit" value="Submit">
+        </div>
+
+        <div id="confirmDeleteModal">
+            Are you sure you want to delete <span id="deleteItemName"></span>?
+            <br><br>
+            <button id="cancelDeleteItemButton">Cancel</button>
+            <button id="confirmDeleteItemButton">Yes</button>
+        </div>
+
+        <div id="confirmDeleteAllModal">
+            Are you sure you want to delete the purchased items?
+            <br><br>
+            <button id="cancelDeleteAllItemsButton">Cancel</button>
+            <button id="confirmDeleteAllItemsButton">Yes</button>
         </div>
 
         <div id="editItemModal">
@@ -149,6 +185,23 @@
             <br><br>
             <button id="cancelDeleteItemButton">Cancel</button>
             <button id="confirmDeleteItemButton">Yes</button>
+        </div>
+
+        <div id="confirmDeleteGroupModal">
+            Are you sure you want to delete the group: <span id="deleteGroupName"></span>?
+            <br><br>
+            <button id="cancelDeleteGroupButton">Cancel</button>
+            <button id="confirmDeleteGroupButton">Yes</button>
+        </div>
+
+        <div id="createNewGroupModal">
+            Enter the group new name: <input type="text" name="newGroupName" id="createNewGroupInput">
+            <br><br>
+            <div id="validateNewGroupDiv">
+                Please enter a valid group name
+            </div>
+            <button id="cancelCreateNewGroupButton">Cancel</button>
+            <button id="confirmCreateNewGroupButton">Yes</button>
         </div>
     </div>
 </body>
