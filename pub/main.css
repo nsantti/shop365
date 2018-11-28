@@ -1,16 +1,42 @@
-/* div {
-    border: 1px solid black;
-} */
+/*div {
+    border: 1px solid red;
+}*/
+* {
+    box-sizing: border-box;
+}
 
 body {
     background-color: #336B87;
     font-family: "Verdana", Times, serif;
+    box-sizing: border-box;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    min-width: 700px;
+}
+
+hr {
+    border: 0.8px solid black;
+    width: 100%;
+}
+
+#form-table {
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 #the-table {
     border: 1px solid black;
     width: 100%;
     border-collapse: collapse;
+    overflow: auto;
+}
+
+#table-header {
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 #the-table th {
@@ -56,6 +82,15 @@ body {
     margin: 3px;
 }
 
+.empty-table {
+    color: rgb(50,50,50);
+    text-align: center;
+    border: 2px solid black;
+    margin: 3px;
+    font-style: italic;
+    padding: 15px;
+}
+
 td {
     padding: 5px;
 }
@@ -69,66 +104,69 @@ td {
     margin-right: auto;
     margin-left: auto;
     background-color: #90AFC5;
-    height: 800px;
     border: 1px solid black;
-    margin-bottom: 100px;
+    max-height: 50%;
+    /*margin-bottom: 100px;*/
 }
 
 #header {
+    width: 100%;
     text-align: center;
     font-size: 30px;
     padding: 2px;
+    display: table;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #left-header {
-    width: 33%;
+    width: 33.33%;
     float: left;
     font-size: 22px;
-    margin-top: 10px;
+    margin: 0;
 }
 
 #center-header {
-    width: 33%;
+    width: 33.33%;
     float: left;
+    margin: 0;
 }
 
 #right-header {
-    width: 33%;
+    width: 33.33%;
     float: left;
     font-size: 22px;
-    margin-top: 10px;
+    margin: 0;
 }
 
 #item-form {
-    border: 1px solid brown;
+    /*border: 1px solid brown;*/
     clear: both;
-    margin-top: 100px;
+    margin-top: 1%;
     width: 90%;
     margin-left: auto;
     margin-right: auto;
-    height: 500px;
+    height: auto;
 }
 
-.item-content {
+/*.item-content {
     overflow: auto;
-}
+}*/
 
 #form-header {
     text-align: center;
     border: 1px solid black;
-    padding: 8px;
+    padding: 8px 0px 8px 0px;
 }
 
 #footer button {
     text-align: center;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 5px;
 }
 
 #footer {
     text-align: center;
-    margin: 5px;
 }
 
 /* Generated with: https://www.bestcssbuttongenerator.com/#/7 */
@@ -152,8 +190,8 @@ td {
     cursor: pointer;
     color: #ffffff;
     font-family: Arial;
-    font-size: 15px;
-    padding: 9px 23px;
+    font-size: 14px;
+    padding: 6px 10px;
     text-decoration: none;
     text-shadow: 0px 1px 0px #263666;
 }
@@ -267,6 +305,7 @@ td {
 
 #mainView {
     display: visible;
+    padding: 0;
 }
 
 #changeGroupModal {
@@ -319,4 +358,22 @@ td {
 
 #generateGroupButton {
     margin-top: 25px;
+}
+
+
+/*Some styling defaults*/
+.italic {
+    font-style: italic;
+}
+
+.underline {
+    text-decoration: underline;
+}
+
+.center {
+    text-align: center;
+}
+
+.bold {
+    font-weight: bold;
 }

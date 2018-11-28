@@ -50,7 +50,15 @@ function updateGUI(arr) {
     $("#table-body").html("");
     items = sortList(arr);
     purchasedCount = 0;
-    $("#content").height(400 + 53*items.length);
+
+    if($("#mainView").is(":visible")) {
+        $("#content").height(400 + 53*items.length);
+        $("#mainView").height(400 + 53*items.length);
+    }
+
+    if(items.length == 0)
+        $("#table-body").append("<tr><td class='empty-table' colspan='5'>No Items to Show</td></tr>");
+
     for (i of items) {
         let t = i;
         var h = $("<tr id='" + t._id + "' class='table-item'><td></td><td class='" + t._id + "'>" + retrieve(t.name) + "</td><td class='" + t._id + "'>" + t.quantity + "</td><td class='" + t._id + "'>" + t.comments + "</td><td></td></tr>");
@@ -346,8 +354,13 @@ function startItAll() {
     });
 
     $("#removeAllButton").click(function () {
-        $("#confirmDeleteAllModal").show();
-        $("#mainView").hide();
+        if(purchasedCount > 0) {
+            $("#confirmDeleteAllModal").show();
+            $("#mainView").hide();
+        }
+        else {
+            alert("No Items Selected!")
+        }
     });
 
 
