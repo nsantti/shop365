@@ -134,7 +134,10 @@ socket.on("forceOutOfList", function (w) {
     $("#changeGroupModal").show();
     $("#mainView").hide();
     $("#addItemModal").hide();
+    $("#editItemModal").hide();
     $("#confirmDeleteAllModal").hide();
+    $("#confirmDeleteModal").hide();
+    $("#confirmDeleteGroupModal").hide();
     //alert("The group has been deleted by another member");
 });
 
