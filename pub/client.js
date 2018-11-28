@@ -10,8 +10,6 @@ var currentItem;
 
 var purchasedCount = 0;
 
-socket.on()
-
 socket.on("updateGroupList", function (groupArrayFromServer) {
     allGroups = groupArrayFromServer;
     //console.log(groupArrayFromServer);
@@ -118,75 +116,94 @@ socket.on("updateItemList", function (items) {
 });
 
 socket.on("forceClientCall", function (w) {
-    //console.log("forceClientCall");
     socket.emit("getGroupItems", cleanString(group));
 });
 
 socket.on("forceOutOfList", function (w) {
-    $("#changeGroupModal").show();
-    $("#mainView").hide();
-    $("#addItemModal").hide();
-    $("#confirmDeleteAllModal").hide();
-    //alert("The group has been deleted by another member");
+    hideAll();
+    $("#groupDeletedModal").show();
 });
 
 //Nate
 function updateClickHandlers() {
     $(".delete-button").click(function (event) {
+        hideAll();
         $("#confirmDeleteModal").show();
-        $("#addItemModal").hide();
-        $("#mainView").hide();
-        $("#editItemModal").hide();
         $("#deleteItemName").text(retrieve(currentItem.name));
     });
 
     $("#cancelDeleteItemButton").click(function () {
+        hideAll();
         $("#mainView").show();
-        $("#confirmDeleteModal").hide();
     });
 
     $("#confirmDeleteItemButton").click(function () {
+        hideAll();
         $("#mainView").show();
-        $("#confirmDeleteModal").hide();
         socket.emit("deleteItem", group, currentItem._id);
     });
     //Nick added these
     $("#cancelDeleteAllItemsButton").click(function () {
+        hideAll();
         $("#mainView").show();
-        $("#confirmDeleteAllModal").hide();
     });
 
     $("#confirmDeleteAllItemsButton").click(function () {
+        hideAll();
         $("#mainView").show();
-        $("#confirmDeleteAllModal").hide();
         socket.emit("removePurchased", group);
     });
 
     $("#cancelDeleteGroupButton").click(function() {
+        hideAll();
         $("#mainView").show();
-        $("#confirmDeleteGroupModal").hide();
     });
 
     $("#confirmDeleteGroupButton").click(function() {
         socket.emit("deleteGroup", cleanString(group));
+        hideAll();
         $("#changeGroupModal").show();
-        $("#mainView").hide();
-        $("#confirmDeleteGroupModal").hide();
     });
 
     $("#deleteGroupButton").click(function () {
         $("#deleteGroupName").text(retrieve(group));
-        $("#mainView").hide();
+        hideAll();
         $("#confirmDeleteGroupModal").show();
     });
 
     $("#cancelCreateNewGroupButton").click(function() {
-        $("#createNewGroupModal").hide();
+        hideAll();
         $("#changeGroupModal").show();
-        $("#validateNewGroupDiv").hide();
     });
 
+    $("#groupWasDeleted").click(function() {
+        hideAll();
+        $("#changeGroupModal").show();
+    });
     
+}
+
+function hideAll() {
+    hideAllModals();
+    hideAllDivs();
+}
+
+function hideAllDivs() {
+    $("#validateNewGroupDiv").hide();
+    $("#validateGroupDiv").hide();
+    $("#validateAddItemDiv").hide();
+}
+
+function hideAllModals() {
+    $("#addItemModal").hide();
+    $("#createNewGroupModal").hide();
+    $("#changeGroupModal").hide();
+    $("#editItemModal").hide();
+    $("#confirmDeleteModal").hide();
+    $("#confirmDeleteAllModal").hide();
+    $("#confirmDeleteGroupModal").hide();
+    $("#groupDeletedModal").hide();
+    $("#mainView").hide();
 }
 
 //Nate
@@ -296,7 +313,7 @@ function startItAll() {
         socket.emit("changeRoom", group);
         //socket.emit("getGroupItems", group);
         //TODO: handle the group value
-        $("#changeGroupModal").hide();
+        hideAll();
         $("#mainView").show();
     });
 
@@ -307,9 +324,8 @@ function startItAll() {
         // socket.emit("changeRoom", group);
         // socket.emit("addNewGroup", group);
         //socket.emit("getGroupItems", cleanString(group));
+        hideAll();
         $("#createNewGroupModal").show();
-        $("#changeGroupModal").hide();
-        $("#mainView").hide();
         $("#createNewGroupInput").val('');
     });
 
@@ -321,7 +337,7 @@ function startItAll() {
             socket.emit("changeRoom", group);
             socket.emit("addNewGroup", group);
             socket.emit("getGroupItems", cleanString(group));
-            $("#createNewGroupModal").hide();
+            hideAll();
             $("#mainView").show();
         } else {
             $("#validateNewGroupDiv").show();
@@ -332,22 +348,21 @@ function startItAll() {
 
     $("#changeGroupButton").click(function () {
         socket.emit("getGroups");
+        hideAll();
         $("#changeGroupModal").show();
         $("#changeGroupText").val('');
-        $("#mainView").hide();
-        $("#addItemModal").hide();
     });
 
     
 
     $("#editItemCancel").click(function () {
+        hideAll();
         $("#mainView").show();
-        $("#editItemModal").hide();
     });
 
     $("#removeAllButton").click(function () {
+        hideAll();
         $("#confirmDeleteAllModal").show();
-        $("#mainView").hide();
     });
 
 
