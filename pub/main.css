@@ -16,7 +16,7 @@ body {
 }
 
 hr {
-    border: 0.8px solid black;
+    border: 1px solid black;
     width: 100%;
 }
 
@@ -24,6 +24,7 @@ hr {
     width: 100%;
     margin: 0;
     padding: 0;
+    border: 1px solid black;
 }
 
 #the-table {
@@ -141,6 +142,7 @@ td {
 
 #item-form {
     /*border: 1px solid brown;*/
+    padding: 0;
     clear: both;
     margin-top: 1%;
     width: 90%;
