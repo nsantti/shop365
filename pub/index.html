@@ -35,6 +35,11 @@
                         Add new item...
                     </button>
                 </div>
+                <div id="footer">
+                    <button type="button" id="removeAllButton" class="styledButton">
+                        Remove all purchased items
+                    </button>
+                </div>
                 <div id="form-table">
                     <table id="the-table">
                         <thead id="table-header">
@@ -91,11 +96,7 @@
                     </table>
                 </div>
             </div>
-            <div id="footer">
-                <button type="button" id="removeAllButton" class="styledButton">
-                    Remove all purchased items
-                </button>
-            </div>
+            
         </div>
 
 
@@ -184,6 +185,23 @@
             <br><br>
             <button id="cancelDeleteItemButton">Cancel</button>
             <button id="confirmDeleteItemButton">Yes</button>
+        </div>
+
+        <div id="confirmDeleteGroupModal">
+            Are you sure you want to delete the group: <span id="deleteGroupName"></span>?
+            <br><br>
+            <button id="cancelDeleteGroupButton">Cancel</button>
+            <button id="confirmDeleteGroupButton">Yes</button>
+        </div>
+
+        <div id="createNewGroupModal">
+            Enter the group new name: <input type="text" name="newGroupName" id="createNewGroupInput">
+            <br><br>
+            <div id="validateNewGroupDiv">
+                Please enter a valid group name
+            </div>
+            <button id="cancelCreateNewGroupButton">Cancel</button>
+            <button id="confirmCreateNewGroupButton">Yes</button>
         </div>
     </div>
 </body>
