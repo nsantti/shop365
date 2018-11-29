@@ -18,7 +18,8 @@
         <div id="mainView">
             <div id="header">
                 <div id="left-header">
-                    Group: <span id="groupID">No Group Available</span><br>
+                    Group: <span id="groupID">No Group Available</span>
+                    <br>
                     <button type="button" id="changeGroupButton" class="styledButton">Change</button>
                     <button type="button" id="deleteGroupButton" class="styledButton">Delete</button>
                 </div>
@@ -35,6 +36,11 @@
                         Add new item...
                     </button>
                     <hr>
+                    <button type="button" id="removeAllButton" class="styledButton">
+                        Remove all purchased items
+                    </button>
+                </div>
+                <div id="footer">
                     <button type="button" id="removeAllButton" class="styledButton">
                         Remove all purchased items
                     </button>
@@ -146,6 +152,9 @@
             <br><br>
             Priority: <input type="checkbox" name="editItemPriority" id="editModalItemPriority">
             <br><br>
+            <div id="validateEditItemDiv">
+                Illegal field names detected.
+            </div>
             <button type="button" id="editItemCancel">Cancel</button>
             <input type="submit" name="editItemSubmit" id="editModalItemSubmit" value="Submit">
         </div>
@@ -164,27 +173,7 @@
             <button id="confirmDeleteAllItemsButton">Yes</button>
         </div>
 
-        <div id="editItemModal">
-            <h1>Edit Item</h1>
-            <input type="text" name="itemID" id="storeItemID" readonly>
-            Item Name: <input type="text" name="editItemName" id="editModalItemName">
-            <br><br>
-            Quantity: <input type="number" name="editItemQuantity" id="editModalItemQuantity" min="1" value="1">
-            <br><br>
-            Comments (optional): <input type="text" name="editItemComment" id="editModalItemComment">
-            <br><br>
-            Priority: <input type="checkbox" name="editItemPriority" id="editModalItemPriority">
-            <br><br>
-            <button type="button" id="editItemCancel">Cancel</button>
-            <input type="submit" name="editItemSubmit" id="editModalItemSubmit" value="Submit">
-        </div>
-
-        <div id="confirmDeleteModal">
-            Are you sure you want to delete <span id="deleteItemName"></span>?
-            <br><br>
-            <button id="cancelDeleteItemButton">Cancel</button>
-            <button id="confirmDeleteItemButton">Yes</button>
-        </div>
+        
 
         <div id="confirmDeleteGroupModal">
             Are you sure you want to delete the group: <span id="deleteGroupName"></span>?
@@ -201,6 +190,11 @@
             </div>
             <button id="cancelCreateNewGroupButton">Cancel</button>
             <button id="confirmCreateNewGroupButton">Yes</button>
+        </div>
+
+        <div id="groupDeletedModal">
+            This group has been deleted
+            <button id="groupWasDeleted">Ok</button>
         </div>
     </div>
 </body>

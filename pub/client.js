@@ -10,10 +10,11 @@ var currentItem;
 
 var purchasedCount = 0;
 
-socket.on()
-
 socket.on("updateGroupList", function (groupArrayFromServer) {
     allGroups = groupArrayFromServer;
+    //console.log(groupArrayFromServer);
+    // console.log(allGroups);
+    //console.log(allGroups[0].groupid);
     $("#groupSelector").html("");
 
     if (allGroups.length != 0) {
@@ -44,70 +45,64 @@ var sortingType = {
 var currentSort;
 
 function updateGUI(arr) {
-
-    items = arr;
-    purchasedCount = 0;
-
     $("#table-body").html("");
-
-    if($("#mainView").is(":visible")) {
-        $("#content").height(400 + 53*items.length);
-        $("#mainView").height(400 + 53*items.length);
-    }
-
-    if(items.length == 0)
-        $("#table-body").append("<tr><td class='empty-table' colspan='5'>No Items to Show</td></tr>");
-    else {  
-        items = sortList(arr);
-
-        for (i of items) {
-            let t = i;
-            var h = $("<tr id='" + t._id + "' class='table-item'><td></td><td class='" + t._id + "'>" + retrieve(t.name) + "</td><td class='" + t._id + "'>" + t.quantity + "</td><td class='" + t._id + "'>" + t.comments + "</td><td></td></tr>");
-            var priorityButtonClass = t.priority ? 'truePriorityButton' : 'falsePriorityButton';
-            var priorityText = t.priority ? "High" : "Low";
-            var pb = $("<button class=" + priorityButtonClass + " type='button'>" + priorityText + "</button>");
-            var editb = $("<button class='edit-button' type='button'>Edit</button>");
-            var delb = $("<button class='delete-button' type='button'>Delete</button>");
+    items = sortList(arr);
+    purchasedCount = 0;
+    $("#content").height(400 + 53 * items.length);
+    for (i of items) {
+        let t = i;
+        var h = $("<tr id='" + t._id + "' class='table-item'><td></td><td class='" + t._id + "'>" + retrieve(t.name) + "</td><td class='" + t._id + "'>" + t.quantity + "</td><td class='" + t._id + "'>" + t.comments + "</td><td></td></tr>");
+        var priorityButtonClass = t.priority ? 'truePriorityButton' : 'falsePriorityButton';
+        var priorityText = t.priority ? "High" : "Low";
+        var pb = $("<button class=" + priorityButtonClass + " type='button'>" + priorityText + "</button>");
+        var editb = $("<button class='edit-button' type='button'>Edit</button>");
+        var delb = $("<button class='delete-button' type='button'>Delete</button>");
 
 
-            pb.click(function () {
-                socket.emit("togglePriority", group, t._id, t.priority);
-            });
+        pb.click(function () {
+            socket.emit("togglePriority", group, t._id, t.priority);
+            console.log(t.name + " " + t.priority);
+        });
 
 
-            $(h.children()[0]).append(pb);
-            $(h.children()[4]).append(editb).append(delb);
+        $(h.children()[0]).append(pb);
+        $(h.children()[4]).append(editb).append(delb);
 
-            editb.click(function () {
-                $("#storeItemID").val(t._id);
-                $("#editModalItemName").val(retrieve(t.name));
-                $("#editModalItemQuantity").val(t.quantity);
-                $("#editModalItemComment").val(t.comments);
-                $("#editModalItemPriority").prop('checked', t.priority);
-                $("#mainView").hide();
-                $("#editItemModal").show();
-                $("#editModalItemName").focus();
-            });
+        editb.click(function () {
+            $("#storeItemID").val(t._id);
+            $("#editModalItemName").val(retrieve(t.name));
+            $("#editModalItemQuantity").val(t.quantity);
+            $("#editModalItemComment").val(t.comments);
+            $("#editModalItemPriority").prop('checked', t.priority);
+            $("#mainView").hide();
+            $("#editItemModal").show();
+            $("#editModalItemName").focus();
+        });
 
-            delb.click(function () {
-                currentItem = t;
-            });
+        delb.click(function () {
+            currentItem = t;
+        });
 
-            $("#table-body").append(h);
+        $("#table-body").append(h);
 
-            if (t.purchased == true) {
-                purchasedCount++;
-                $("#" + t._id).css("background-color", "#00b386");
-            } else {
-                $("#" + t._id).css("background-color", "#90AFC5");
-            }
-
-            $("." + t._id).click(function () {
-                socket.emit("togglePurchased", group, t._id, t.purchased);
-            });
+        if (t.purchased == true) {
+            purchasedCount++;
+            //console.log("Changing background color to gray");
+            $("#" + t._id).css("background-color", "#7c7c7c");
+        } else {
+            // console.log("Changing the background color to blue");
+            $("#" + t._id).css("background-color", "#90AFC5");
         }
 
+        $("." + t._id).click(function () {
+            //console.log("The item you are sending to the server is " + t.name + " and the purchased boolean is " + t.purchased);
+            console.log("Toggling purchased");
+            socket.emit("togglePurchased", group, t._id, t.purchased);
+        });
+
     }
+    console.log(purchasedCount);
+    //purchasedCount = 0;
     updateClickHandlers();
 }
 
@@ -115,87 +110,101 @@ socket.on("updateItemList", function (items) {
     $("#table-body").html("");
     $("#groupID").text(retrieve(group).toUpperCase());
     $("#date").text(makeDate());
+    console.log("Item array coming from server")
+    console.log(items);
     updateGUI(items);
 });
 
-/*socket.on("forceClientCall", function (b) {
-    if(typeof(b) === 'undefined') {
-        $("#table-body").html("");
-        $("#table-body").append("<tr><td class='empty-table' colspan='5'>Loading...</td></tr>");
-    }
+socket.on("forceClientCall", function (w) {
     socket.emit("getGroupItems", cleanString(group));
-});*/
+});
 
-socket.on("forceOutOfList", function () {
-    $("#changeGroupModal").show();
-    $("#content").css('height', '300px');
-    $("#mainView").hide();
-    $("#addItemModal").hide();
-    $("#editItemModal").hide();
-    $("#confirmDeleteAllModal").hide();
-    $("#confirmDeleteModal").hide();
-    $("#confirmDeleteGroupModal").hide();
+socket.on("forceOutOfList", function (w) {
+    hideAll();
+    $("#groupDeletedModal").show();
 });
 
 //Nate
 function updateClickHandlers() {
     $(".delete-button").click(function (event) {
+        hideAll();
         $("#confirmDeleteModal").show();
-        $("#addItemModal").hide();
-        $("#mainView").hide();
-        $("#editItemModal").hide();
         $("#deleteItemName").text(retrieve(currentItem.name));
     });
 
     $("#cancelDeleteItemButton").click(function () {
+        hideAll();
         $("#mainView").show();
-        $("#confirmDeleteModal").hide();
     });
 
     $("#confirmDeleteItemButton").click(function () {
+        hideAll();
         $("#mainView").show();
-        $("#confirmDeleteModal").hide();
         socket.emit("deleteItem", group, currentItem._id);
     });
     //Nick added these
     $("#cancelDeleteAllItemsButton").click(function () {
+        hideAll();
         $("#mainView").show();
-        $("#confirmDeleteAllModal").hide();
     });
 
     $("#confirmDeleteAllItemsButton").click(function () {
+        hideAll();
         $("#mainView").show();
-        $("#confirmDeleteAllModal").hide();
         socket.emit("removePurchased", group);
     });
 
-    $("#cancelDeleteGroupButton").click(function() {
+    $("#cancelDeleteGroupButton").click(function () {
+        hideAll();
         $("#mainView").show();
-        $("#confirmDeleteGroupModal").hide();
     });
 
-    $("#confirmDeleteGroupButton").click(function() {
+    $("#confirmDeleteGroupButton").click(function () {
         socket.emit("deleteGroup", cleanString(group));
+        hideAll();
         $("#changeGroupModal").show();
-        $("#content").css('height', '300px');
-        $("#mainView").hide();
-        $("#confirmDeleteGroupModal").hide();
     });
 
     $("#deleteGroupButton").click(function () {
         $("#deleteGroupName").text(retrieve(group));
-        $("#mainView").hide();
+        hideAll();
         $("#confirmDeleteGroupModal").show();
     });
 
-    $("#cancelCreateNewGroupButton").click(function() {
-        $("#createNewGroupModal").hide();
+    $("#cancelCreateNewGroupButton").click(function () {
+        hideAll();
         $("#changeGroupModal").show();
-        $("#content").css('height', '300px');
-        $("#validateNewGroupDiv").hide();
     });
 
-    
+    $("#groupWasDeleted").click(function () {
+        hideAll();
+        $("#changeGroupModal").show();
+    });
+
+}
+
+function hideAll() {
+    hideAllModals();
+    hideAllDivs();
+}
+
+function hideAllDivs() {
+    $("#validateNewGroupDiv").hide();
+    $("#validateGroupDiv").hide();
+    $("#validateAddItemDiv").hide();
+    $("#validateEditItemDiv").hide();
+}
+
+function hideAllModals() {
+    $("#addItemModal").hide();
+    $("#createNewGroupModal").hide();
+    $("#changeGroupModal").hide();
+    $("#editItemModal").hide();
+    $("#confirmDeleteModal").hide();
+    $("#confirmDeleteAllModal").hide();
+    $("#confirmDeleteGroupModal").hide();
+    $("#groupDeletedModal").hide();
+    $("#mainView").hide();
 }
 
 //Nate
@@ -232,11 +241,8 @@ function startItAll() {
         socket.emit("getGroupItems", group);
     }
 
+    hideAll();
     $("#changeGroupModal").show();
-    $("#content").css('height', '300px');
-    $("#mainView").hide();
-    $("#addItemModal").hide();
-    $("#confirmDeleteAllModal").hide();
     $("#changeGroupText").focus();
     $("#changeGroupText").val('');
 
@@ -256,11 +262,11 @@ function startItAll() {
     $("#modalItemSubmit").click(function () {
         if (!validateName($("#modalItemName").val())) {
             $("#validateAddItemDiv").show();
-        }
-        else if (!validateQuantity($("#modalItemQuantity").val())) {
+        } else if (!validateQuantity($("#modalItemQuantity").val())) {
             $("#validateAddItemDiv").show();
-        }
-        else {
+        } else if (!validateComment($("#modalItemComment").val())) {
+            $("#validateAddItemDiv").show();
+        } else {
             socket.emit("receiveItemFromClient",
                 cleanString(group),
                 cleanString($("#modalItemName").val()),
@@ -276,10 +282,12 @@ function startItAll() {
     });
 
     $("#editModalItemSubmit").click(function () {
-        if (!validateName($("#editModalItemName").val())) {
-            //TODO: Handle bad name input
-        } else if (!validateQuantity($("#editModalItemQuantity").val())) {
-            //TODO: Handle bad quantity input
+        if (!validateName($("#editModalItemName").val())) { // Has bad name
+            $("#validateEditItemDiv").show();
+        } else if (!validateQuantity($("#editModalItemQuantity").val())) { // Has bad quantity
+            $("#validateEditItemDiv").show();
+        } else if (!validateComment($("#editModalItemComment").val())) { // Has bad comment
+            $("#validateEditItemDiv").show();
         } else {
             socket.emit("editItem", //id, name, quantity, comments, priority
                 group,
@@ -291,6 +299,7 @@ function startItAll() {
             );
             $("#mainView").show();
             $("#editItemModal").hide();
+            $("#validateEditItemDiv").hide();
             clearAllInputFields();
         }
     });
@@ -298,7 +307,7 @@ function startItAll() {
     $("#createGroupButton").click(function () {
         let temp = $("#groupSelector").val().toLowerCase();
         if (temp == '') {
-            group = 'test_group';   
+            group = 'test_group';
         }
         else {
             group = cleanString(temp);
@@ -306,7 +315,7 @@ function startItAll() {
         socket.emit("changeRoom", group);
         //socket.emit("getGroupItems", group);
         //TODO: handle the group value
-        $("#changeGroupModal").hide();
+        hideAll();
         $("#mainView").show();
     });
 
@@ -317,53 +326,40 @@ function startItAll() {
         // socket.emit("changeRoom", group);
         // socket.emit("addNewGroup", group);
         //socket.emit("getGroupItems", cleanString(group));
+        hideAll();
         $("#createNewGroupModal").show();
-        $("#changeGroupModal").hide();
-        $("#mainView").hide();
         $("#createNewGroupInput").val('');
     });
 
-    $("#confirmCreateNewGroupButton").click(function() {
-        let newGroup = cleanString($("#createNewGroupInput").val());
-        //TODO: validate the newGroup variable
-        if (true) {
+    $("#confirmCreateNewGroupButton").click(function () {
+        if (!validateGroupName($("#createNewGroupInput").val())) {
+            $("#validateNewGroupDiv").show();
+        } else {
+            let newGroup = cleanString($("#createNewGroupInput").val());
             group = newGroup;
             socket.emit("changeRoom", group);
             socket.emit("addNewGroup", group);
             socket.emit("getGroupItems", cleanString(group));
-            $("#createNewGroupModal").hide();
+            hideAll();
             $("#mainView").show();
-        } else {
-            $("#validateNewGroupDiv").show();
         }
-       
-
     });
 
     $("#changeGroupButton").click(function () {
         socket.emit("getGroups");
+        hideAll();
         $("#changeGroupModal").show();
-        $("#content").css('height', '300px');
         $("#changeGroupText").val('');
-        $("#mainView").hide();
-        $("#addItemModal").hide();
     });
 
-    
-
     $("#editItemCancel").click(function () {
+        hideAll();
         $("#mainView").show();
-        $("#editItemModal").hide();
     });
 
     $("#removeAllButton").click(function () {
-        if(purchasedCount > 0) {
-            $("#confirmDeleteAllModal").show();
-            $("#mainView").hide();
-        }
-        else {
-            alert("No Items Selected!")
-        }
+        hideAll();
+        $("#confirmDeleteAllModal").show();
     });
 
 
@@ -392,8 +388,6 @@ function startItAll() {
     });
 }
 
-
-
 function getModalItemPriority() {
     return $("#modalItemPriority").prop('checked');
 }
@@ -410,7 +404,19 @@ $(startItAll);
 
 
 function validateName(name) {
-    return (name.replace(/\s/g, '').length > 0); //Return true if not empty string or not all whitespace
+    return (name.replace(/\s/g, '').length > 0 && !isTooLong(name)); //Returns true if not empty string, not all whitespace, and is not too long
+}
+
+function validateGroupName(name) {
+    if (includes(cleanString(name))) return false;
+    return (name.replace(/\s/g, '').length > 0);
+}
+
+function includes(name) {
+    for (let i = 0; i < allGroups.length; i++) {
+        if (allGroups[i].name == name) return true;
+    }
+    return false;
 }
 
 function validateQuantity(quantity) {
@@ -425,6 +431,20 @@ function validateQuantity(quantity) {
     //console.log("STEP 3: " + parseInt(q));
     if (parseInt(q) < 1) return false;
     return true;
+}
+
+function validateComment(comment) {
+    return (!isTooLong(comment));
+}
+
+function isTooLong(inputString) { //Max 15 characters per word
+    var arrayOfWords = inputString.split(' ');
+    for (let i = 0; i < arrayOfWords.length; i++) {
+        if (arrayOfWords[i].length >= 15) {
+            return true;
+        }
+    }
+    return false;
 }
 
 // Takes a word, returns a string all lowercase separated by underscores
@@ -475,3 +495,7 @@ exports.retrieve = retrieve;
 exports.makeDate = makeDate;
 exports.formatDate = formatDate;
 exports.dateMillis = dateMillis;
+exports.validateName = validateName;
+exports.validateQuantity = validateQuantity;
+exports.validateComment = validateComment;
+exports.isTooLong = isTooLong;

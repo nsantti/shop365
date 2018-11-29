@@ -169,6 +169,7 @@ td {
 
 #footer {
     text-align: center;
+    margin: 5px;
 }
 
 /* Generated with: https://www.bestcssbuttongenerator.com/#/7 */
@@ -318,7 +319,7 @@ td {
     display: none;
 }
 
-#confirmDeleteModal, #confirmDeleteAllModal, #confirmDeleteGroupModal, #createNewGroupModal{
+#confirmDeleteModal, #confirmDeleteAllModal, #confirmDeleteGroupModal, #createNewGroupModal, #groupDeletedModal{
     text-align: center;
     background-color: white;
     width: 400px;
