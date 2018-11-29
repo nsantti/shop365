@@ -408,7 +408,15 @@ function validateName(name) {
 }
 
 function validateGroupName(name) {
+    if (includes(cleanString(name))) return false;
     return (name.replace(/\s/g, '').length > 0);
+}
+
+function includes(name) {
+    for (let i = 0; i < allGroups.length; i++) {
+        if (allGroups[i].name == name) return true;
+    }
+    return false;
 }
 
 function validateQuantity(quantity) {
