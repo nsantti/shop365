@@ -154,7 +154,7 @@ function updateClickHandlers() {
     $("#confirmDeleteGroupButton").click(function () {
         socket.emit("deleteGroup", cleanString(group));
         hideAll();
-        group = "no_group_selected";
+        group = "";
         socket.emit("changeRoom", group);
         $("#changeGroupModal").show();
     });
