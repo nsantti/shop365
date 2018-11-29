@@ -388,8 +388,6 @@ function startItAll() {
     });
 }
 
-
-
 function getModalItemPriority() {
     return $("#modalItemPriority").prop('checked');
 }
@@ -431,7 +429,7 @@ function validateComment(comment) {
     return (!isTooLong(comment));
 }
 
-function isTooLong(inputString) { //Max 30 characters per word
+function isTooLong(inputString) { //Max 15 characters per word
     var arrayOfWords = inputString.split(' ');
     for (let i = 0; i < arrayOfWords.length; i++) {
         if (arrayOfWords[i].length >= 15) {
@@ -489,3 +487,7 @@ exports.retrieve = retrieve;
 exports.makeDate = makeDate;
 exports.formatDate = formatDate;
 exports.dateMillis = dateMillis;
+exports.validateName = validateName;
+exports.validateQuantity = validateQuantity;
+exports.validateComment = validateComment;
+exports.isTooLong = isTooLong;

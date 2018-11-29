@@ -93,6 +93,10 @@ describe('Validates field input correctly', function () {
         assert.equal(clientFunction.validateName(''), false);
     });
 
+    it('should not allow a long name', function () {
+        assert.equal(clientFunction.validateName('wwwwwwwwwwwwwww'), false);
+    });
+
     it('should not allow a name with only spaces', function () {
         assert.equal(clientFunction.validateName('         '), false);
         assert.equal(clientFunction.validateName('     \t \n \r    '), false);
@@ -104,6 +108,14 @@ describe('Validates field input correctly', function () {
 
     it('should allow a name with numbers in it', function () {
         assert.equal(clientFunction.validateName('  3 eggs '), true);
+    });
+
+    it('should allow a blank comment', function () {
+        assert.equal(clientFunction.validateComment(''), true);
+    });
+
+    it('should not allow a long comment', function () {
+        assert.equal(clientFunction.validateComment('asdfasdfasdfasdasdf'), false);
     });
 });
 
