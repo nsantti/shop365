@@ -67,7 +67,6 @@ io.sockets.on("connection", function(socket) {
 
 	socket.on("getGroupItems", function(group) {
 		db.collection(group).find({}).toArray(function(err, docs) {
-			console.log(docs);
 			if (err!=null) {
 				console.log("ERROR: " + err);
 			}
