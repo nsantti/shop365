@@ -293,6 +293,7 @@ td {
 
 #addItemModal {
     text-align: center;
+    height: 300px;
     border: 1px solid black;
     padding: 8px;
     display: visible;

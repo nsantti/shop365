@@ -47,9 +47,11 @@ var sortingType = {
 var currentSort;
 
 function updateGUI(arr) {
-    $("#table-body").html("");
-    items = sortList(arr);
+
+    items = arr;
     purchasedCount = 0;
+
+    $("#table-body").html("");
 
     if($("#mainView").is(":visible")) {
         $("#content").height(400 + 53*items.length);
@@ -58,57 +60,62 @@ function updateGUI(arr) {
 
     if(items.length == 0)
         $("#table-body").append("<tr><td class='empty-table' colspan='5'>No Items to Show</td></tr>");
+    /*else if(items.length == 1 && items[0] == "")
+        $("#table-body").append("<tr><td class='empty-table' colspan='5'>Loading...</td></tr>");*/
+    else {  
+        items = sortList(arr);
 
-    for (i of items) {
-        let t = i;
-        var h = $("<tr id='" + t._id + "' class='table-item'><td></td><td class='" + t._id + "'>" + retrieve(t.name) + "</td><td class='" + t._id + "'>" + t.quantity + "</td><td class='" + t._id + "'>" + t.comments + "</td><td></td></tr>");
-        var priorityButtonClass = t.priority ? 'truePriorityButton' : 'falsePriorityButton';
-        var priorityText = t.priority ? "High" : "Low";
-        var pb = $("<button class=" + priorityButtonClass + " type='button'>" + priorityText + "</button>");
-        var editb = $("<button class='edit-button' type='button'>Edit</button>");
-        var delb = $("<button class='delete-button' type='button'>Delete</button>");
-
-
-        pb.click(function () {
-            socket.emit("togglePriority", group, t._id, t.priority);
-            console.log(t.name + " " + t.priority);
-        });
+        for (i of items) {
+            let t = i;
+            var h = $("<tr id='" + t._id + "' class='table-item'><td></td><td class='" + t._id + "'>" + retrieve(t.name) + "</td><td class='" + t._id + "'>" + t.quantity + "</td><td class='" + t._id + "'>" + t.comments + "</td><td></td></tr>");
+            var priorityButtonClass = t.priority ? 'truePriorityButton' : 'falsePriorityButton';
+            var priorityText = t.priority ? "High" : "Low";
+            var pb = $("<button class=" + priorityButtonClass + " type='button'>" + priorityText + "</button>");
+            var editb = $("<button class='edit-button' type='button'>Edit</button>");
+            var delb = $("<button class='delete-button' type='button'>Delete</button>");
 
 
-        $(h.children()[0]).append(pb);
-        $(h.children()[4]).append(editb).append(delb);
+            pb.click(function () {
+                socket.emit("togglePriority", group, t._id, t.priority);
+                console.log(t.name + " " + t.priority);
+            });
 
-        editb.click(function () {
-            $("#storeItemID").val(t._id);
-            $("#editModalItemName").val(retrieve(t.name));
-            $("#editModalItemQuantity").val(t.quantity);
-            $("#editModalItemComment").val(t.comments);
-            $("#editModalItemPriority").prop('checked', t.priority);
-            $("#mainView").hide();
-            $("#editItemModal").show();
-            $("#editModalItemName").focus();
-        });
 
-        delb.click(function () {
-            currentItem = t;
-        });
+            $(h.children()[0]).append(pb);
+            $(h.children()[4]).append(editb).append(delb);
 
-        $("#table-body").append(h);
+            editb.click(function () {
+                $("#storeItemID").val(t._id);
+                $("#editModalItemName").val(retrieve(t.name));
+                $("#editModalItemQuantity").val(t.quantity);
+                $("#editModalItemComment").val(t.comments);
+                $("#editModalItemPriority").prop('checked', t.priority);
+                $("#mainView").hide();
+                $("#editItemModal").show();
+                $("#editModalItemName").focus();
+            });
 
-        if (t.purchased == true) {
-            purchasedCount++;
-            //console.log("Changing background color to gray");
-            $("#" + t._id).css("background-color", "#7c7c7c");
-        } else {
-            // console.log("Changing the background color to blue");
-            $("#" + t._id).css("background-color", "#90AFC5");
+            delb.click(function () {
+                currentItem = t;
+            });
+
+            $("#table-body").append(h);
+
+            if (t.purchased == true) {
+                purchasedCount++;
+                //console.log("Changing background color to gray");
+                $("#" + t._id).css("background-color", "#00b386");
+            } else {
+                // console.log("Changing the background color to blue");
+                $("#" + t._id).css("background-color", "#90AFC5");
+            }
+
+            $("." + t._id).click(function () {
+                //console.log("The item you are sending to the server is " + t.name + " and the purchased boolean is " + t.purchased);
+                console.log("Toggling purchased");
+                socket.emit("togglePurchased", group, t._id, t.purchased);
+            });
         }
-
-        $("." + t._id).click(function () {
-            //console.log("The item you are sending to the server is " + t.name + " and the purchased boolean is " + t.purchased);
-            console.log("Toggling purchased");
-            socket.emit("togglePurchased", group, t._id, t.purchased);
-        });
 
     }
     console.log(purchasedCount);
@@ -125,13 +132,19 @@ socket.on("updateItemList", function (items) {
     updateGUI(items);
 });
 
-socket.on("forceClientCall", function (w) {
+socket.on("forceClientCall", function (b) {
     //console.log("forceClientCall");
+    console.log(b);
+    if(typeof(b) === 'undefined') {
+        $("#table-body").html("");
+        $("#table-body").append("<tr><td class='empty-table' colspan='5'>Loading...</td></tr>");
+    }
     socket.emit("getGroupItems", cleanString(group));
 });
 
-socket.on("forceOutOfList", function (w) {
+socket.on("forceOutOfList", function () {
     $("#changeGroupModal").show();
+    $("#content").css('height', '300px');
     $("#mainView").hide();
     $("#addItemModal").hide();
     $("#editItemModal").hide();
@@ -181,6 +194,7 @@ function updateClickHandlers() {
     $("#confirmDeleteGroupButton").click(function() {
         socket.emit("deleteGroup", cleanString(group));
         $("#changeGroupModal").show();
+        $("#content").css('height', '300px');
         $("#mainView").hide();
         $("#confirmDeleteGroupModal").hide();
     });
@@ -194,6 +208,7 @@ function updateClickHandlers() {
     $("#cancelCreateNewGroupButton").click(function() {
         $("#createNewGroupModal").hide();
         $("#changeGroupModal").show();
+        $("#content").css('height', '300px');
         $("#validateNewGroupDiv").hide();
     });
 
@@ -235,6 +250,7 @@ function startItAll() {
     }
 
     $("#changeGroupModal").show();
+    $("#content").css('height', '300px');
     $("#mainView").hide();
     $("#addItemModal").hide();
     $("#confirmDeleteAllModal").hide();
@@ -344,6 +360,7 @@ function startItAll() {
     $("#changeGroupButton").click(function () {
         socket.emit("getGroups");
         $("#changeGroupModal").show();
+        $("#content").css('height', '300px');
         $("#changeGroupText").val('');
         $("#mainView").hide();
         $("#addItemModal").hide();
