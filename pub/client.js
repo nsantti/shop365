@@ -47,6 +47,10 @@ var currentSort;
 function updateGUI(arr) {
     $("#table-body").html("");
     items = sortList(arr);
+
+    if(items.length == 0)
+        $("#table-body").append("<tr><td class='empty-table' colspan='5'>No Items in List</td></tr>")
+
     purchasedCount = 0;
     $("#content").height(400 + 53 * items.length);
     for (i of items) {
