@@ -262,11 +262,11 @@ function startItAll() {
     $("#modalItemSubmit").click(function () {
         if (!validateName($("#modalItemName").val())) {
             $("#validateAddItemDiv").show();
-        }
-        else if (!validateQuantity($("#modalItemQuantity").val())) {
+        } else if (!validateQuantity($("#modalItemQuantity").val())) {
             $("#validateAddItemDiv").show();
-        }
-        else {
+        } else if (!validateComment($("#modalItemComment").val())) {
+            $("#validateAddItemDiv").show();
+        } else {
             socket.emit("receiveItemFromClient",
                 cleanString(group),
                 cleanString($("#modalItemName").val()),
@@ -282,9 +282,11 @@ function startItAll() {
     });
 
     $("#editModalItemSubmit").click(function () {
-        if (!validateName($("#editModalItemName").val())) {
+        if (!validateName($("#editModalItemName").val())) { // Has bad name
             $("#validateEditItemDiv").show();
-        } else if (!validateQuantity($("#editModalItemQuantity").val())) {
+        } else if (!validateQuantity($("#editModalItemQuantity").val())) { // Has bad quantity
+            $("#validateEditItemDiv").show();
+        } else if (!validateComment($("#editModalItemComment").val())) { // Has bad comment
             $("#validateEditItemDiv").show();
         } else {
             socket.emit("editItem", //id, name, quantity, comments, priority
@@ -330,7 +332,7 @@ function startItAll() {
     });
 
     $("#confirmCreateNewGroupButton").click(function () {
-        if (!validateName($("#createNewGroupInput").val())) {
+        if (!validateGroupName($("#createNewGroupInput").val())) {
             $("#validateNewGroupDiv").show();
         } else {
             let newGroup = cleanString($("#createNewGroupInput").val());
@@ -404,7 +406,11 @@ $(startItAll);
 
 
 function validateName(name) {
-    return (name.replace(/\s/g, '').length > 0); //Return true if not empty string or not all whitespace
+    return (name.replace(/\s/g, '').length > 0 && !isTooLong(name)); //Returns true if not empty string, not all whitespace, and is not too long
+}
+
+function validateGroupName(name) {
+    return (name.replace(/\s/g, '').length > 0);
 }
 
 function validateQuantity(quantity) {
@@ -419,6 +425,20 @@ function validateQuantity(quantity) {
     //console.log("STEP 3: " + parseInt(q));
     if (parseInt(q) < 1) return false;
     return true;
+}
+
+function validateComment(comment) {
+    return (!isTooLong(comment));
+}
+
+function isTooLong(inputString) { //Max 30 characters per word
+    var arrayOfWords = inputString.split(' ');
+    for (let i = 0; i < arrayOfWords.length; i++) {
+        if (arrayOfWords[i].length >= 15) {
+            return true;
+        }
+    }
+    return false;
 }
 
 // Takes a word, returns a string all lowercase separated by underscores
