@@ -57,8 +57,6 @@ function updateGUI(arr) {
 
     if(items.length == 0)
         $("#table-body").append("<tr><td class='empty-table' colspan='5'>No Items to Show</td></tr>");
-    /*else if(items.length == 1 && items[0] == "")
-        $("#table-body").append("<tr><td class='empty-table' colspan='5'>Loading...</td></tr>");*/
     else {  
         items = sortList(arr);
 
@@ -120,13 +118,13 @@ socket.on("updateItemList", function (items) {
     updateGUI(items);
 });
 
-socket.on("forceClientCall", function (b) {
+/*socket.on("forceClientCall", function (b) {
     if(typeof(b) === 'undefined') {
         $("#table-body").html("");
         $("#table-body").append("<tr><td class='empty-table' colspan='5'>Loading...</td></tr>");
     }
     socket.emit("getGroupItems", cleanString(group));
-});
+});*/
 
 socket.on("forceOutOfList", function () {
     $("#changeGroupModal").show();
@@ -300,7 +298,7 @@ function startItAll() {
     $("#createGroupButton").click(function () {
         let temp = $("#groupSelector").val().toLowerCase();
         if (temp == '') {
-            group = 'test_group';
+            group = 'test_group';   
         }
         else {
             group = cleanString(temp);
