@@ -14,9 +14,6 @@ socket.on()
 
 socket.on("updateGroupList", function (groupArrayFromServer) {
     allGroups = groupArrayFromServer;
-    //console.log(groupArrayFromServer);
-    // console.log(allGroups);
-    //console.log(allGroups[0].groupid);
     $("#groupSelector").html("");
 
     if (allGroups.length != 0) {
@@ -77,7 +74,6 @@ function updateGUI(arr) {
 
             pb.click(function () {
                 socket.emit("togglePriority", group, t._id, t.priority);
-                console.log(t.name + " " + t.priority);
             });
 
 
@@ -103,23 +99,17 @@ function updateGUI(arr) {
 
             if (t.purchased == true) {
                 purchasedCount++;
-                //console.log("Changing background color to gray");
                 $("#" + t._id).css("background-color", "#00b386");
             } else {
-                // console.log("Changing the background color to blue");
                 $("#" + t._id).css("background-color", "#90AFC5");
             }
 
             $("." + t._id).click(function () {
-                //console.log("The item you are sending to the server is " + t.name + " and the purchased boolean is " + t.purchased);
-                console.log("Toggling purchased");
                 socket.emit("togglePurchased", group, t._id, t.purchased);
             });
         }
 
     }
-    console.log(purchasedCount);
-    //purchasedCount = 0;
     updateClickHandlers();
 }
 
@@ -127,14 +117,10 @@ socket.on("updateItemList", function (items) {
     $("#table-body").html("");
     $("#groupID").text(retrieve(group).toUpperCase());
     $("#date").text(makeDate());
-    console.log("Item array coming from server")
-    console.log(items);
     updateGUI(items);
 });
 
 socket.on("forceClientCall", function (b) {
-    //console.log("forceClientCall");
-    console.log(b);
     if(typeof(b) === 'undefined') {
         $("#table-body").html("");
         $("#table-body").append("<tr><td class='empty-table' colspan='5'>Loading...</td></tr>");
@@ -151,7 +137,6 @@ socket.on("forceOutOfList", function () {
     $("#confirmDeleteAllModal").hide();
     $("#confirmDeleteModal").hide();
     $("#confirmDeleteGroupModal").hide();
-    //alert("The group has been deleted by another member");
 });
 
 //Nate
