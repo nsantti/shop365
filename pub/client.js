@@ -49,15 +49,15 @@ function updateGUI(arr) {
         $("#table-body").append("<tr><td class='empty-table' colspan='5'>No Items in List</td></tr>")
 
     purchasedCount = 0;
-    $("#content").height(400 + 25 * items.length);
+    $("#content").height(400 + 53 * items.length);
     for (i of items) {
         let t = i;
         var h = $("<tr id='" + t._id + "' class='table-item'><td></td><td class='" + t._id + "'>" + retrieve(t.name) + "</td><td class='" + t._id + "'>" + t.quantity + "</td><td class='" + t._id + "'>" + t.comments + "</td><td></td></tr>");
         var priorityButtonClass = t.priority ? 'truePriorityButton' : 'falsePriorityButton';
         var priorityText = t.priority ? "High" : "Low";
         var pb = $("<button class=" + priorityButtonClass + " type='button'>" + priorityText + "</button>");
-        var editb = $("<button class='edit-button' type='button'>Edit</button>");
-        var delb = $("<button class='delete-button' type='button'>Delete</button>");
+        var editb = $("<button class='styled-button2' type='button'>Edit</button>");
+        var delb = $("<button class='styled-button2' type='button'>Delete</button>");
 
 
         pb.click(function () {
