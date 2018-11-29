@@ -88,16 +88,10 @@ io.sockets.on("connection", function(socket) {
 
 	socket.on("togglePriority", function(group, id, priority) {
 		db.collection(group).updateOne({_id: ObjectID(id)}, { $set: { priority: oppositeBool(priority)}}, sendItemListToClient);
-		/*db.collection(group).updateOne({_id: ObjectID(id)}, { $set: { priority: oppositeBool(priority)}}, function() {
-			io.in(socket.room).emit("forceClientCall", true);
-		});*/
 	});
 
 	socket.on("togglePurchased", function(group, id, purchased) {
 		db.collection(group).updateOne({_id: ObjectID(id)}, { $set: { purchased: oppositeBool(purchased) }}, sendItemListToClient);
-		/*db.collection(group).updateOne({_id: ObjectID(id)}, { $set: { purchased: oppositeBool(purchased) }}, function() {
-			io.in(socket.room).emit("forceClientCall", true);
-		});*/
 	});
 
 	socket.on("receiveItemFromClient", function(group, name, quantity, comments, priority) {
@@ -112,9 +106,6 @@ io.sockets.on("connection", function(socket) {
 		}
 		clientGroup = group;
 		db.collection(group).insertOne(objToInsert, sendItemListToClient);
-		/*db.collection(group).insertOne(objToInsert, function() {
-			io.in(socket.room).emit("forceClientCall");
-		});*/
 	});
 
 	socket.on("editItem", function(group, id, name, quantity, comments, priority) {
@@ -125,16 +116,10 @@ io.sockets.on("connection", function(socket) {
 			priority: priority
 		}}, 
 		sendItemListToClient);
-		/*function() {
-			io.in(socket.room).emit("forceClientCall");
-		});*/
 		console.log("Item updated");
 	});
 
 	socket.on("removePurchased", function(group) {
-		/*db.collection(group).deleteMany({purchased: true}, function() {
-			io.in(socket.room).emit("forceClientCall");
-		});*/
 		clientGroup = group;
 		db.collection(group).deleteMany({purchased: true}, sendItemListToClient);
 	});
