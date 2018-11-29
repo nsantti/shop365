@@ -229,6 +229,11 @@ function sortList(arr) {
             if (b.priority && !a.priority) return 1;
             return -1;
         })
+    } else {
+        arr = arr.sort(function(a,b) {
+            if (dateMillis(a.date) < dateMillis(b.date)) return 1;
+            return -1;
+        })
     }
     return arr;
 }
@@ -301,9 +306,8 @@ function startItAll() {
                 $("#editModalItemComment").val(),
                 $("#editModalItemPriority").is(":checked")
             );
+            hideAll();
             $("#mainView").show();
-            $("#editItemModal").hide();
-            $("#validateEditItemDiv").hide();
             clearAllInputFields();
         }
     });
@@ -320,6 +324,7 @@ function startItAll() {
         //socket.emit("getGroupItems", group);
         //TODO: handle the group value
         hideAll();
+        resetSort();
         $("#mainView").show();
     });
 
@@ -368,26 +373,38 @@ function startItAll() {
 
 
     $("#table-quantity").click(function () {
-        currentSort = sortingType.quantity;
-        $("#table-name").css('background-color', '#90AFC5');
-        $("#table-priority").css('background-color', '#90AFC5');
-        $("#table-quantity").css('background-color', '#66a0c9');
+        if (currentSort === sortingType.quantity) {
+            resetSort();
+        } else {
+            currentSort = sortingType.quantity;
+            $("#table-name").css('background-color', '#90AFC5');
+            $("#table-priority").css('background-color', '#90AFC5');
+            $("#table-quantity").css('background-color', '#66a0c9');
+        }
         updateGUI(items);
     });
 
     $("#table-name").click(function () {
-        currentSort = sortingType.name;
-        $("#table-name").css('background-color', '#66a0c9');
-        $("#table-priority").css('background-color', '#90AFC5');
-        $("#table-quantity").css('background-color', '#90AFC5');
+        if (currentSort === sortingType.name) {
+            resetSort();
+        } else {
+            currentSort = sortingType.name;
+            $("#table-name").css('background-color', '#66a0c9');
+            $("#table-priority").css('background-color', '#90AFC5');
+            $("#table-quantity").css('background-color', '#90AFC5');
+        }
         updateGUI(items);
     });
 
     $("#table-priority").click(function () {
-        currentSort = sortingType.priority;
-        $("#table-name").css('background-color', '#90AFC5');
-        $("#table-priority").css('background-color', '#66a0c9');
-        $("#table-quantity").css('background-color', '#90AFC5');
+        if (currentSort === sortingType.priority) {
+            resetSort();
+        } else {
+            currentSort = sortingType.priority;
+            $("#table-name").css('background-color', '#90AFC5');
+            $("#table-priority").css('background-color', '#66a0c9');
+            $("#table-quantity").css('background-color', '#90AFC5');
+        }
         updateGUI(items);
     });
 }
@@ -401,6 +418,13 @@ function clearAllInputFields() {
     $("#modalItemQuantity").val(1);
     $("#modalItemComment").val("");
     $("#modalItemPriority").prop('checked', false);
+}
+
+function resetSort() {
+    currentSort = sortingType.none;
+    $("#table-name").css('background-color', '#90AFC5');
+    $("#table-priority").css('background-color', '#90AFC5');
+    $("#table-quantity").css('background-color', '#90AFC5');
 }
 
 
@@ -484,7 +508,7 @@ function formatDate(date) {
 }
 
 function dateMillis(date) {
-    return date.getTime();
+    return new Date(date).getTime();
 }
 
 function fixComment(comment) {
