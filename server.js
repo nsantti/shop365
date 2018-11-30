@@ -19,15 +19,15 @@ var io = socketio(server);
 
 app.use(express.static("pub"));
 
-io.sockets.on("connection", function(socket) {
+io.sockets.on("connection", function (socket) {
 	console.log("Somebody connected...");
 
 	socket.room = 'test_group';
 	socket.join('test_group');
 
 	function sendGroupListToClient() {
-		db.listCollections().toArray(function(err, cols) {
-			if(err != null) {
+		db.listCollections().toArray(function (err, cols) {
+			if (err != null) {
 				console.log("ERROR: " + err);
 			}
 			else {
@@ -48,9 +48,9 @@ io.sockets.on("connection", function(socket) {
 		});
 	}
 
-	socket.on("getGroupCollections", function() {
-		db.listCollections().toArray(function(err, cols) {
-			if(err != null) {
+	socket.on("getGroupCollections", function () {
+		db.listCollections().toArray(function (err, cols) {
+			if (err != null) {
 				console.log("ERROR: " + err);
 			}
 			else {
@@ -64,9 +64,9 @@ io.sockets.on("connection", function(socket) {
 		db.createCollection(newGroupFromClient, sendGroupListToClient);
 	});
 
-	socket.on("getGroupItems", function(group) {
-		db.collection(group).find({}).toArray(function(err, docs) {
-			if (err!=null) {
+	socket.on("getGroupItems", function (group) {
+		db.collection(group).find({}).toArray(function (err, docs) {
+			if (err != null) {
 				console.log("ERROR: " + err);
 			}
 			else {
@@ -83,7 +83,7 @@ io.sockets.on("connection", function(socket) {
 		db.collection(socket.room).updateOne({_id: ObjectID(id)}, { $set: { purchased: oppositeBool(purchased) }}, sendItemListToClient);
 	});
 
-	socket.on("receiveItemFromClient", function(group, name, quantity, comments, priority) {
+	socket.on("receiveItemFromClient", function (group, name, quantity, comments, priority) {
 		let objToInsert = {
 			name: name,
 			priority: priority,
@@ -119,25 +119,25 @@ io.sockets.on("connection", function(socket) {
 		db.collection(socket.room).removeOne({_id: ObjectID(id)}, sendItemListToClient);
 	});
 
-	socket.on("disconnect", function() {
+	socket.on("disconnect", function () {
 		console.log("Somebody disconnected.");
 	});
 
-	socket.on("changeRoom", function(newRoom) {
+	socket.on("changeRoom", function (newRoom) {
 		socket.leave(socket.room);
 		socket.room = newRoom;
 		socket.join(socket.room);
 		// clientGroup = newRoom;
 		sendItemListToClient();
 	});
-	
+
 });
 
-function compareGroups(a,b) {
+function compareGroups(a, b) {
 	if (a.name < b.name)
-	  return -1;
+		return -1;
 	if (a.name > b.name)
-	  return 1;
+		return 1;
 	return 0;
 }
 
@@ -145,12 +145,12 @@ function oppositeBool(bool) {
 	return !bool;
 }
 
-client.connect(function(err) {
+client.connect(function (err) {
 	if (err != null) throw err;
 	else {
 		db = client.db("shop365");
 
-		server.listen(80, function() {
+		server.listen(80, function () {
 			console.log("Server with socket.io is ready.");
 		});
 	}
