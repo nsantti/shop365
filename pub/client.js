@@ -44,7 +44,6 @@ var currentSort;
 function updateGUI(arr) {
     $("#table-body").html("");
     items = sortList(arr);
-    console.log(arr);
 
     if (items.length == 0)
         $("#table-body").append("<tr><td class='empty-table' colspan='5'>No Items in List</td></tr>")
@@ -198,7 +197,6 @@ function hideAllModals() {
 
 function sortList(arr) {
     if (currentSort == sortingType.quantity) {
-        console.log("SORTING BY QUANTITY");
         arr = arr.sort(function (a, b) {
             if (a.quantity < b.quantity) return 1;
             return -1;
