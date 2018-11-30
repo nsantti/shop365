@@ -44,6 +44,7 @@ var currentSort;
 function updateGUI(arr) {
     $("#table-body").html("");
     items = sortList(arr);
+    console.log(arr);
 
     if (items.length == 0)
         $("#table-body").append("<tr><td class='empty-table' colspan='5'>No Items in List</td></tr>")
