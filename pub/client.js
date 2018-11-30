@@ -425,6 +425,7 @@ function validateName(name) {
 }
 
 function validateGroupName(name) {
+    if (cleanString(name) == cleanString("No Group Found")) return false;
     if (includes(cleanString(name))) return false;
     return (name.replace(/\s/g, '').length > 0);
 }
@@ -438,14 +439,11 @@ function includes(name) {
 
 function validateQuantity(quantity) {
     let str = quantity.toString();
-    //console.log("STEP 1: " + str);
     let q = str.replace(/\s/g, '');
-    //console.log("STEP 2: " + q);
     if (q.length < 1 || q.length >= 15) return false;
     for (let i = 0; i < q.length; i++) {
         if (q[i] < '0' || q[i] > '9') return false;
     }
-    //console.log("STEP 3: " + parseInt(q));
     if (parseInt(q) < 1) return false;
     return true;
 }
