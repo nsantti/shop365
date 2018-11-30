@@ -26,8 +26,8 @@ app.use(express.static("pub"));
 io.sockets.on("connection", function(socket) {
 	console.log("Somebody connected...");
 
-	socket.room = 'test_group';
-	socket.join('test_group');
+	socket.room = 'no_group_found';
+	socket.join('no_group_found');
 
 	function sendGroupListToClient() {
 		db.listCollections().toArray(function(err, cols) {
@@ -42,7 +42,7 @@ io.sockets.on("connection", function(socket) {
 	}
 
 	function sendItemListToClient() {
-		db.collection(clientGroup).find({}).toArray(function(err, docs) {
+		db.collection(socket.room).find({}).toArray(function(err, docs) {
 			if (err!=null) {
 				console.log("ERROR: " + err);
 			}
