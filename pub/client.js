@@ -45,7 +45,7 @@ function updateGUI(arr) {
     $("#table-body").html("");
     items = sortList(arr);
 
-    if(items.length == 0)
+    if (items.length == 0)
         $("#table-body").append("<tr><td class='empty-table' colspan='5'>No Items in List</td></tr>")
 
     purchasedCount = 0;
@@ -127,7 +127,7 @@ function updateClickHandlers() {
         $("#mainView").show();
         socket.emit("deleteItem", group, currentItem._id);
     });
-    
+
     $("#cancelDeleteAllItemsButton").click(function () {
         hideAll();
         $("#mainView").show();
@@ -211,7 +211,7 @@ function sortList(arr) {
             return -1;
         })
     } else {
-        arr = arr.sort(function(a,b) {
+        arr = arr.sort(function (a, b) {
             if (dateMillis(a.date) < dateMillis(b.date)) return 1;
             return -1;
         })
@@ -338,7 +338,7 @@ function startItAll() {
     });
 
     $("#removeAllButton").click(function () {
-        if(purchasedCount > 0) {
+        if (purchasedCount > 0) {
             hideAll();
             $("#confirmDeleteAllModal").show();
         }
