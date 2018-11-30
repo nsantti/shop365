@@ -5,6 +5,8 @@ var ObjectID = mongodb.ObjectID;
 var client = new MongoClient("mongodb://localhost:27017", { useNewUrlParser: true });
 var db;
 
+var clientGroup;
+
 var express = require("express");
 
 var app = express();
@@ -22,8 +24,8 @@ app.use(express.static("pub"));
 io.sockets.on("connection", function (socket) {
 	console.log("Somebody connected...");
 
-	socket.room = 'test_group';
-	socket.join('test_group');
+	socket.room = 'no_group_found';
+	socket.join('no_group_found');
 
 	function sendGroupListToClient() {
 		db.listCollections().toArray(function (err, cols) {
@@ -60,7 +62,8 @@ io.sockets.on("connection", function (socket) {
 		});
 	});
 
-	socket.on("addNewGroup", function(newGroupFromClient) {
+	socket.on("addNewGroup", function (newGroupFromClient) {
+		clientGroup = newGroupFromClient
 		db.createCollection(newGroupFromClient, sendGroupListToClient);
 	});
 
@@ -75,12 +78,14 @@ io.sockets.on("connection", function (socket) {
 		});
 	});
 
-	socket.on("togglePriority", function(group, id, priority) {
-		db.collection(socket.room).updateOne({_id: ObjectID(id)}, { $set: { priority: oppositeBool(priority)}}, sendItemListToClient);
+	socket.on("togglePriority", function (group, id, priority) {
+		clientGroup = group;
+		db.collection(group).updateOne({ _id: ObjectID(id) }, { $set: { priority: oppositeBool(priority) } }, sendItemListToClient);
 	});
 
-	socket.on("togglePurchased", function(group, id, purchased) {
-		db.collection(socket.room).updateOne({_id: ObjectID(id)}, { $set: { purchased: oppositeBool(purchased) }}, sendItemListToClient);
+	socket.on("togglePurchased", function (group, id, purchased) {
+		clientGroup = group;
+		db.collection(group).updateOne({ _id: ObjectID(id) }, { $set: { purchased: oppositeBool(purchased) } }, sendItemListToClient);
 	});
 
 	socket.on("receiveItemFromClient", function (group, name, quantity, comments, priority) {
@@ -93,30 +98,37 @@ io.sockets.on("connection", function (socket) {
 			purchased: false,
 			comments: comments
 		}
-		db.collection(socket.room).insertOne(objToInsert, sendItemListToClient);;
+		clientGroup = group;
+		db.collection(group).insertOne(objToInsert, sendItemListToClient);
 	});
 
-	socket.on("editItem", function(group, id, name, quantity, comments, priority) {
-		db.collection(socket.room).updateOne({_id: ObjectID(id)}, {$set: {
-			name: name,
-			quantity: quantity,
-			comments: comments,
-			priority: priority
-		}}, sendItemListToClient);
+	socket.on("editItem", function (group, id, name, quantity, comments, priority) {
+		clientGroup = group;
+		db.collection(group).updateOne({ _id: ObjectID(id) }, {
+			$set: {
+				name: name,
+				quantity: quantity,
+				comments: comments,
+				priority: priority
+			}
+		}, sendItemListToClient);
 	});
 
-	socket.on("removePurchased", function(group) {
-		db.collection(socket.room).deleteMany({purchased: true}, sendItemListToClient);
+	socket.on("removePurchased", function (group) {
+		clientGroup = group;
+		db.collection(group).deleteMany({ purchased: true }, sendItemListToClient);
 	});
 
-	socket.on("deleteGroup", function(group) {
+	socket.on("deleteGroup", function (group) {
+		clientGroup = group;
 		io.in(socket.room).emit("forceOutOfList");
-		db.collection(socket.room).drop(sendGroupListToClient);
+		db.collection(group).drop(sendGroupListToClient);
 	});
 
 
-	socket.on("deleteItem", function(group, id) {
-		db.collection(socket.room).removeOne({_id: ObjectID(id)}, sendItemListToClient);
+	socket.on("deleteItem", function (group, id) {
+		clientGroup = group;
+		db.collection(group).removeOne({ _id: ObjectID(id) }, sendItemListToClient);
 	});
 
 	socket.on("disconnect", function () {
@@ -127,6 +139,7 @@ io.sockets.on("connection", function (socket) {
 		socket.leave(socket.room);
 		socket.room = newRoom;
 		socket.join(socket.room);
+		clientGroup = newRoom;
 		sendItemListToClient();
 	});
 
