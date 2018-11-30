@@ -424,7 +424,7 @@ function validateQuantity(quantity) {
     //console.log("STEP 1: " + str);
     let q = str.replace(/\s/g, '');
     //console.log("STEP 2: " + q);
-    if (q.length < 1) return false;
+    if (q.length < 1 || q.length >= 15) return false;
     for (let i = 0; i < q.length; i++) {
         if (q[i] < '0' || q[i] > '9') return false;
     }
