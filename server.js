@@ -5,8 +5,6 @@ var ObjectID = mongodb.ObjectID;
 var client = new MongoClient("mongodb://localhost:27017", { useNewUrlParser: true });
 var db;
 
-var clientGroup;
-
 var express = require("express");
 
 var app = express();
@@ -65,7 +63,6 @@ io.sockets.on("connection", function (socket) {
 	});
 
 	socket.on("addNewGroup", function (newGroupFromClient) {
-		clientGroup = newGroupFromClient
 		db.createCollection(newGroupFromClient, sendGroupListToClient);
 	});
 
@@ -81,12 +78,10 @@ io.sockets.on("connection", function (socket) {
 	});
 
 	socket.on("togglePriority", function (group, id, priority) {
-		clientGroup = group;
 		db.collection(group).updateOne({ _id: ObjectID(id) }, { $set: { priority: oppositeBool(priority) } }, sendItemListToClient);
 	});
 
 	socket.on("togglePurchased", function (group, id, purchased) {
-		clientGroup = group;
 		db.collection(group).updateOne({ _id: ObjectID(id) }, { $set: { purchased: oppositeBool(purchased) } }, sendItemListToClient);
 	});
 
@@ -100,12 +95,10 @@ io.sockets.on("connection", function (socket) {
 			purchased: false,
 			comments: comments
 		}
-		clientGroup = group;
 		db.collection(group).insertOne(objToInsert, sendItemListToClient);
 	});
 
 	socket.on("editItem", function (group, id, name, quantity, comments, priority) {
-		clientGroup = group;
 		db.collection(group).updateOne({ _id: ObjectID(id) }, {
 			$set: {
 				name: name,
@@ -117,19 +110,16 @@ io.sockets.on("connection", function (socket) {
 	});
 
 	socket.on("removePurchased", function (group) {
-		clientGroup = group;
 		db.collection(group).deleteMany({ purchased: true }, sendItemListToClient);
 	});
 
 	socket.on("deleteGroup", function (group) {
-		clientGroup = group;
 		io.in(socket.room).emit("forceOutOfList");
 		db.collection(group).drop(sendGroupListToClient);
 	});
 
 
 	socket.on("deleteItem", function (group, id) {
-		clientGroup = group;
 		db.collection(group).removeOne({ _id: ObjectID(id) }, sendItemListToClient);
 	});
 
@@ -143,8 +133,7 @@ io.sockets.on("connection", function (socket) {
 		socket.join(socket.room);
 		console.log(io.sockets.adapter.rooms);
 		console.log("");
-		clientGroup = newRoom;
-		sendItemListToClient();
+		sendItemListToClient(socket.room);
 	});
 
 });
