@@ -50,8 +50,7 @@ function updateGUI(arr) {
 
     purchasedCount = 0;
     $("#content").height(400 + 53 * items.length);
-    for (i of items) {
-        let t = i;
+    for (let t of items) {
         var h = $("<tr id='" + t._id + "' class='table-item'><td></td><td class='" + t._id + "'>" + retrieve(t.name) + "</td><td class='" + t._id + "'>" + t.quantity + "</td><td class='" + t._id + "'>" + t.comments + "</td><td></td></tr>");
         var priorityButtonClass = t.priority ? 'truePriorityButton' : 'falsePriorityButton';
         var priorityText = t.priority ? "High" : "Low";
@@ -59,11 +58,9 @@ function updateGUI(arr) {
         var editb = $("<button class='styled-button2' type='button'>Edit</button>");
         var delb = $("<button class='styled-button2' type='button'>Delete</button>");
 
-
         pb.click(function () {
             socket.emit("togglePriority", group, t._id, t.priority);
         });
-
 
         $(h.children()[0]).append(pb);
         $(h.children()[4]).append(editb).append(delb);
@@ -119,7 +116,6 @@ socket.on("forceOutOfList", function (w) {
     $("#groupDeletedModal").show();
 });
 
-//Nate
 function updateClickHandlers() {
     $("#cancelDeleteItemButton").click(function () {
         hideAll();
@@ -131,7 +127,7 @@ function updateClickHandlers() {
         $("#mainView").show();
         socket.emit("deleteItem", group, currentItem._id);
     });
-    //Nick added these
+    
     $("#cancelDeleteAllItemsButton").click(function () {
         hideAll();
         $("#mainView").show();
@@ -171,7 +167,6 @@ function updateClickHandlers() {
         hideAll();
         $("#changeGroupModal").show();
     });
-
 }
 
 function hideAll() {
@@ -198,7 +193,6 @@ function hideAllModals() {
     $("#mainView").hide();
 }
 
-//Nate
 function sortList(arr) {
     if (currentSort == sortingType.quantity) {
         console.log("SORTING BY QUANTITY");
@@ -227,11 +221,9 @@ function sortList(arr) {
 
 function startItAll() {
 
-    // socket.emit("getGroups");
     socket.emit("getGroupCollections");
 
     if (typeof (group) === 'undefined') { //All items are loaded and then filtered when group is specified
-        //socket.emit("getAllItems");
         console.log("ERRORR ERRORR EORR")
     } else {
         socket.emit("getGroupItems", group);
@@ -308,20 +300,12 @@ function startItAll() {
             group = cleanString(temp);
         }
         socket.emit("changeRoom", group);
-        //socket.emit("getGroupItems", group);
-        //TODO: handle the group value
         hideAll();
         resetSort();
         $("#mainView").show();
     });
 
     $("#generateGroupButton").click(function () {
-        // group = prompt("Please enter a new group name");
-        // group = cleanString(group);
-        // //TODO: handle the group generation
-        // socket.emit("changeRoom", group);
-        // socket.emit("addNewGroup", group);
-        //socket.emit("getGroupItems", cleanString(group));
         hideAll();
         $("#createNewGroupModal").show();
         $("#createNewGroupInput").val('');
@@ -360,7 +344,6 @@ function startItAll() {
         }
     });
 
-
     $("#table-quantity").click(function () {
         if (currentSort === sortingType.quantity) {
             resetSort();
@@ -398,6 +381,8 @@ function startItAll() {
     });
 }
 
+$(startItAll);
+
 function getModalItemPriority() {
     return $("#modalItemPriority").prop('checked');
 }
@@ -415,10 +400,6 @@ function resetSort() {
     $("#table-priority").css('background-color', '#90AFC5');
     $("#table-quantity").css('background-color', '#90AFC5');
 }
-
-
-$(startItAll);
-
 
 function validateName(name) {
     return (name.replace(/\s/g, '').length > 0 && !isTooLong(name)); //Returns true if not empty string, not all whitespace, and is not too long
@@ -503,7 +484,6 @@ function fixComment(comment) {
         return "";
     }
 }
-
 
 exports.cleanString = cleanString;
 exports.retrieve = retrieve;

@@ -9,7 +9,6 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
-    /*min-width: 700px;*/
 }
 
 #form-table {
@@ -17,7 +16,6 @@ body {
     margin: 0;
     padding: 0 0 10px 0;
     margin: auto;
-    /*border: 1px solid black;*/
 }
 
 #the-table {
@@ -70,7 +68,6 @@ body {
     margin-right: auto;
 }
 
-
 .table-item {
     text-align: center;
     border: 2px solid black;
@@ -103,7 +100,6 @@ td {
     max-height: 50%;
     border-radius: 10px;
     margin-top: 5px;
-    /*margin-bottom: 100px;*/
 }
 
 @media(max-width: 600px) {
@@ -145,7 +141,6 @@ td {
 }
 
 #item-form {
-    /*border: 1px solid brown;*/
     padding: 0;
     clear: both;
     margin-top: 1%;
@@ -156,13 +151,8 @@ td {
     display: table;
 }
 
-/*.item-content {
-    overflow: auto;
-}*/
-
 #form-header {
     text-align: center;
-    /*border: 1px solid black;*/
     padding: 8px 0px 8px 0px;
 }
 
@@ -257,7 +247,6 @@ td {
 	background-color:#77a809;
 }
 
-
 .falsePriorityButton {
 	-moz-box-shadow:inset 0px 1px 0px 0px #f5978e;
 	-webkit-box-shadow:inset 0px 1px 0px 0px #f5978e;
@@ -285,6 +274,7 @@ td {
     text-shadow:0px 1px 0px #810e05;
     width: 100px;
 }
+
 .falsePriorityButton:hover {
 	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #c62d1f), color-stop(1, #f24537));
 	background:-moz-linear-gradient(top, #c62d1f 5%, #f24537 100%);
@@ -333,7 +323,6 @@ td {
     text-decoration: none;
  }
 
-
 #addItemModal {
     text-align: center;
     height: 300px;
@@ -352,8 +341,6 @@ td {
     display: visible;
     padding: 0;
 }
-
-
 
 #changeGroupModal {
     text-align: center;
@@ -405,7 +392,6 @@ td {
 #generateGroupButton {
     margin-top: 25px;
 }
-
 
 /*Some styling defaults*/
 .italic {

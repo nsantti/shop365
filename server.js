@@ -35,7 +35,6 @@ io.sockets.on("connection", function(socket) {
 				console.log("ERROR: " + err);
 			}
 			else {
-				//groupArray = cols;
 				cols.sort(compareGroups);
 				io.emit("updateGroupList", cols);
 			}
@@ -154,29 +153,9 @@ function compareGroups(a,b) {
 	return 0;
 }
 
-function findAll(collection, group) {
-	db.collection(collection).find({groupid: group}).toArray(function(err, result) {
-		if(err) throw err;
-		console.log(result);
-		//client.close();
-	});
-}
-
-function insertNewItem(collection, objToInsert) {
-	db.collection(collection).insertOne(objToInsert, function(err,res) {
-		if (err) throw err;
-		//console.log("1 item inserted");
-		//client.close();
-	});
-}
-
 function oppositeBool(bool) {
-	if(bool == true)
-		return false;
-	else
-		return true;
+	return !bool;
 }
-
 
 client.connect(function(err) {
 	if (err != null) throw err;
