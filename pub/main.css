@@ -1,6 +1,3 @@
-/*div {
-    border: 1px solid red;
-}*/
 * {
     box-sizing: border-box;
 }
@@ -12,26 +9,24 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
-    min-width: 700px;
-}
-
-hr {
-    border: 1px solid black;
-    width: 100%;
+    /*min-width: 700px;*/
 }
 
 #form-table {
     width: 100%;
     margin: 0;
-    padding: 0;
-    border: 1px solid black;
+    padding: 0 0 10px 0;
+    margin: auto;
+    /*border: 1px solid black;*/
 }
 
 #the-table {
-    border: 1px solid black;
+    border: 2px solid black;
     width: 100%;
     border-collapse: collapse;
     overflow: auto;
+    margin: auto;
+    border-radius: 10px;
 }
 
 #table-header {
@@ -41,7 +36,6 @@ hr {
 }
 
 #the-table th {
-    box-sizing: border-box;
     padding: 5px;
 }
 
@@ -107,7 +101,18 @@ td {
     background-color: #90AFC5;
     border: 1px solid black;
     max-height: 50%;
+    border-radius: 10px;
+    margin-top: 5px;
     /*margin-bottom: 100px;*/
+}
+
+@media(max-width: 600px) {
+    body {
+        min-width: 600px;
+    }
+    #content {
+        width: 80%;
+    }
 }
 
 #header {
@@ -115,7 +120,6 @@ td {
     text-align: center;
     font-size: 30px;
     padding: 2px;
-    display: table;
     margin-left: auto;
     margin-right: auto;
 }
@@ -149,6 +153,7 @@ td {
     margin-left: auto;
     margin-right: auto;
     height: auto;
+    display: table;
 }
 
 /*.item-content {
@@ -157,7 +162,7 @@ td {
 
 #form-header {
     text-align: center;
-    border: 1px solid black;
+    /*border: 1px solid black;*/
     padding: 8px 0px 8px 0px;
 }
 
@@ -291,11 +296,47 @@ td {
 	background-color:#c62d1f;
 }
 
+/* From http://cssbuttoncreator.com/ */
+.styled-button2 {
+    background: #D0764F;
+    background-image: -webkit-linear-gradient(top, #D0764F, #D08255);
+    background-image: -moz-linear-gradient(top, #D0764F, #D08255);
+    background-image: -ms-linear-gradient(top, #D0764F, #D08255);
+    background-image: -o-linear-gradient(top, #D0764F, #D08255);
+    background-image: linear-gradient(to bottom, #D0764F, #D08255);
+    -webkit-border-radius: 7px;
+    -moz-border-radius: 7px;
+    border-radius: 7px;
+    height: 20px;
+    line-height: 20px;
+    color: #000000;
+    font-family: 'Open Sans', sans-serif;
+    margin: 2px;
+    width: 58px;
+    font-size: 14px;
+    font-weight: 400;
+    padding: 0px;
+    text-shadow: 1px 1px 20px #000000;
+    border: solid #000000 1px;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+ }
+ 
+ .styled-button2:hover {
+    background: #D0913E;
+    background-image: -webkit-linear-gradient(top, #D0913E, #D0AB47);
+    background-image: -moz-linear-gradient(top, #D0913E, #D0AB47);
+    background-image: -ms-linear-gradient(top, #D0913E, #D0AB47);
+    background-image: -o-linear-gradient(top, #D0913E, #D0AB47);
+    background-image: linear-gradient(to bottom, #D0913E, #D0AB47);
+    text-decoration: none;
+ }
+
 
 #addItemModal {
     text-align: center;
     height: 300px;
-    border: 1px solid black;
     padding: 8px;
     display: visible;
 }
@@ -312,9 +353,10 @@ td {
     padding: 0;
 }
 
+
+
 #changeGroupModal {
     text-align: center;
-    border: 1px solid black;
     height: 300px;
     display: none;
 }
@@ -333,7 +375,7 @@ td {
 }
 
 #generateGroupButton {
-    padding: 15px;
+    padding: 10px;
 }
 
 #validateAddItemDiv {

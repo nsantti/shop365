@@ -12,9 +12,6 @@ var purchasedCount = 0;
 
 socket.on("updateGroupList", function (groupArrayFromServer) {
     allGroups = groupArrayFromServer;
-    //console.log(groupArrayFromServer);
-    // console.log(allGroups);
-    //console.log(allGroups[0].groupid);
     $("#groupSelector").html("");
 
     if (allGroups.length != 0) {
@@ -47,6 +44,10 @@ var currentSort;
 function updateGUI(arr) {
     $("#table-body").html("");
     items = sortList(arr);
+
+    if(items.length == 0)
+        $("#table-body").append("<tr><td class='empty-table' colspan='5'>No Items in List</td></tr>")
+
     purchasedCount = 0;
     $("#content").height(400 + 53 * items.length);
     for (i of items) {
@@ -55,13 +56,12 @@ function updateGUI(arr) {
         var priorityButtonClass = t.priority ? 'truePriorityButton' : 'falsePriorityButton';
         var priorityText = t.priority ? "High" : "Low";
         var pb = $("<button class=" + priorityButtonClass + " type='button'>" + priorityText + "</button>");
-        var editb = $("<button class='edit-button' type='button'>Edit</button>");
-        var delb = $("<button class='delete-button' type='button'>Delete</button>");
+        var editb = $("<button class='styled-button2' type='button'>Edit</button>");
+        var delb = $("<button class='styled-button2' type='button'>Delete</button>");
 
 
         pb.click(function () {
             socket.emit("togglePriority", group, t._id, t.priority);
-            console.log(t.name + " " + t.priority);
         });
 
 
@@ -81,28 +81,25 @@ function updateGUI(arr) {
 
         delb.click(function () {
             currentItem = t;
+            hideAll();
+            $("#confirmDeleteModal").show();
+            $("#deleteItemName").text(retrieve(currentItem.name));
         });
 
         $("#table-body").append(h);
 
         if (t.purchased == true) {
             purchasedCount++;
-            //console.log("Changing background color to gray");
             $("#" + t._id).css("background-color", "#7c7c7c");
         } else {
-            // console.log("Changing the background color to blue");
             $("#" + t._id).css("background-color", "#90AFC5");
         }
 
         $("." + t._id).click(function () {
-            //console.log("The item you are sending to the server is " + t.name + " and the purchased boolean is " + t.purchased);
-            console.log("Toggling purchased");
             socket.emit("togglePurchased", group, t._id, t.purchased);
         });
 
     }
-    console.log(purchasedCount);
-    //purchasedCount = 0;
     updateClickHandlers();
 }
 
@@ -110,8 +107,6 @@ socket.on("updateItemList", function (items) {
     $("#table-body").html("");
     $("#groupID").text(retrieve(group).toUpperCase());
     $("#date").text(makeDate());
-    console.log("Item array coming from server")
-    console.log(items);
     updateGUI(items);
 });
 
@@ -126,12 +121,6 @@ socket.on("forceOutOfList", function (w) {
 
 //Nate
 function updateClickHandlers() {
-    $(".delete-button").click(function (event) {
-        hideAll();
-        $("#confirmDeleteModal").show();
-        $("#deleteItemName").text(retrieve(currentItem.name));
-    });
-
     $("#cancelDeleteItemButton").click(function () {
         hideAll();
         $("#mainView").show();
@@ -162,6 +151,8 @@ function updateClickHandlers() {
     $("#confirmDeleteGroupButton").click(function () {
         socket.emit("deleteGroup", cleanString(group));
         hideAll();
+        group = "no_group_found";
+        socket.emit("changeRoom", group);
         $("#changeGroupModal").show();
     });
 
@@ -223,6 +214,11 @@ function sortList(arr) {
     } else if (currentSort == sortingType.priority) {
         arr = arr.sort(function (a, b) {
             if (b.priority && !a.priority) return 1;
+            return -1;
+        })
+    } else {
+        arr = arr.sort(function(a,b) {
+            if (dateMillis(a.date) < dateMillis(b.date)) return 1;
             return -1;
         })
     }
@@ -297,9 +293,8 @@ function startItAll() {
                 $("#editModalItemComment").val(),
                 $("#editModalItemPriority").is(":checked")
             );
+            hideAll();
             $("#mainView").show();
-            $("#editItemModal").hide();
-            $("#validateEditItemDiv").hide();
             clearAllInputFields();
         }
     });
@@ -316,6 +311,7 @@ function startItAll() {
         //socket.emit("getGroupItems", group);
         //TODO: handle the group value
         hideAll();
+        resetSort();
         $("#mainView").show();
     });
 
@@ -358,32 +354,46 @@ function startItAll() {
     });
 
     $("#removeAllButton").click(function () {
-        hideAll();
-        $("#confirmDeleteAllModal").show();
+        if(purchasedCount > 0) {
+            hideAll();
+            $("#confirmDeleteAllModal").show();
+        }
     });
 
 
     $("#table-quantity").click(function () {
-        currentSort = sortingType.quantity;
-        $("#table-name").css('background-color', '#90AFC5');
-        $("#table-priority").css('background-color', '#90AFC5');
-        $("#table-quantity").css('background-color', '#66a0c9');
+        if (currentSort === sortingType.quantity) {
+            resetSort();
+        } else {
+            currentSort = sortingType.quantity;
+            $("#table-name").css('background-color', '#90AFC5');
+            $("#table-priority").css('background-color', '#90AFC5');
+            $("#table-quantity").css('background-color', '#66a0c9');
+        }
         updateGUI(items);
     });
 
     $("#table-name").click(function () {
-        currentSort = sortingType.name;
-        $("#table-name").css('background-color', '#66a0c9');
-        $("#table-priority").css('background-color', '#90AFC5');
-        $("#table-quantity").css('background-color', '#90AFC5');
+        if (currentSort === sortingType.name) {
+            resetSort();
+        } else {
+            currentSort = sortingType.name;
+            $("#table-name").css('background-color', '#66a0c9');
+            $("#table-priority").css('background-color', '#90AFC5');
+            $("#table-quantity").css('background-color', '#90AFC5');
+        }
         updateGUI(items);
     });
 
     $("#table-priority").click(function () {
-        currentSort = sortingType.priority;
-        $("#table-name").css('background-color', '#90AFC5');
-        $("#table-priority").css('background-color', '#66a0c9');
-        $("#table-quantity").css('background-color', '#90AFC5');
+        if (currentSort === sortingType.priority) {
+            resetSort();
+        } else {
+            currentSort = sortingType.priority;
+            $("#table-name").css('background-color', '#90AFC5');
+            $("#table-priority").css('background-color', '#66a0c9');
+            $("#table-quantity").css('background-color', '#90AFC5');
+        }
         updateGUI(items);
     });
 }
@@ -397,6 +407,13 @@ function clearAllInputFields() {
     $("#modalItemQuantity").val(1);
     $("#modalItemComment").val("");
     $("#modalItemPriority").prop('checked', false);
+}
+
+function resetSort() {
+    currentSort = sortingType.none;
+    $("#table-name").css('background-color', '#90AFC5');
+    $("#table-priority").css('background-color', '#90AFC5');
+    $("#table-quantity").css('background-color', '#90AFC5');
 }
 
 
@@ -480,7 +497,7 @@ function formatDate(date) {
 }
 
 function dateMillis(date) {
-    return date.getTime();
+    return new Date(date).getTime();
 }
 
 function fixComment(comment) {
