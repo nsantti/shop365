@@ -106,12 +106,12 @@ td {
     /*margin-bottom: 100px;*/
 }
 
-@media(max-width: 600px) {
+@media(max-width: 800px) {
     body {
-        min-width: 600px;
+        min-width: 500px;
     }
     #content {
-        width: 80%;
+        width: 90%;
     }
 }
 
