@@ -1,20 +1,39 @@
-/* div {
-    border: 1px solid black;
-} */
+* {
+    box-sizing: border-box;
+}
 
 body {
     background-color: #336B87;
     font-family: "Verdana", Times, serif;
+    box-sizing: border-box;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#form-table {
+    width: 100%;
+    margin: 0;
+    padding: 0 0 10px 0;
+    margin: auto;
 }
 
 #the-table {
-    border: 1px solid black;
+    border: 2px solid black;
     width: 100%;
     border-collapse: collapse;
+    overflow: auto;
+    margin: auto;
+    border-radius: 10px;
+}
+
+#table-header {
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 #the-table th {
-    box-sizing: border-box;
     padding: 5px;
 }
 
@@ -49,11 +68,19 @@ body {
     margin-right: auto;
 }
 
-
 .table-item {
     text-align: center;
     border: 2px solid black;
     margin: 3px;
+}
+
+.empty-table {
+    color: rgb(50,50,50);
+    text-align: center;
+    border: 2px solid black;
+    margin: 3px;
+    font-style: italic;
+    padding: 15px;
 }
 
 td {
@@ -69,57 +96,70 @@ td {
     margin-right: auto;
     margin-left: auto;
     background-color: #90AFC5;
-    height: 800px;
     border: 1px solid black;
-    margin-bottom: 100px;
+    max-height: 50%;
+    border-radius: 10px;
+    margin-top: 5px;
+}
+
+@media(max-width: 800px) {
+    body {
+        min-width: 500px;
+    }
+    #content {
+        width: 90%;
+    }
 }
 
 #header {
+    width: 100%;
     text-align: center;
     font-size: 30px;
     padding: 2px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #left-header {
-    width: 33%;
+    width: 33.33%;
     float: left;
     font-size: 22px;
-    margin-top: 10px;
+    margin: 0;
 }
 
 #center-header {
-    width: 33%;
+    width: 33.33%;
     float: left;
+    margin: 0;
 }
 
 #right-header {
-    width: 33%;
+    width: 33.33%;
     float: left;
     font-size: 22px;
-    margin-top: 10px;
+    margin: 0;
 }
 
 #item-form {
-    border: 1px solid brown;
+    padding: 0;
     clear: both;
-    margin-top: 100px;
+    margin-top: 1%;
     width: 90%;
     margin-left: auto;
     margin-right: auto;
-    height: 500px;
+    height: auto;
+    display: table;
 }
 
 #form-header {
     text-align: center;
-    border: 1px solid black;
-    padding: 8px;
+    padding: 8px 0px 8px 0px;
 }
 
 #footer button {
     text-align: center;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 5px;
 }
 
 #footer {
@@ -148,8 +188,8 @@ td {
     cursor: pointer;
     color: #ffffff;
     font-family: Arial;
-    font-size: 15px;
-    padding: 9px 23px;
+    font-size: 14px;
+    padding: 6px 10px;
     text-decoration: none;
     text-shadow: 0px 1px 0px #263666;
 }
@@ -207,7 +247,6 @@ td {
 	background-color:#77a809;
 }
 
-
 .falsePriorityButton {
 	-moz-box-shadow:inset 0px 1px 0px 0px #f5978e;
 	-webkit-box-shadow:inset 0px 1px 0px 0px #f5978e;
@@ -235,6 +274,7 @@ td {
     text-shadow:0px 1px 0px #810e05;
     width: 100px;
 }
+
 .falsePriorityButton:hover {
 	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #c62d1f), color-stop(1, #f24537));
 	background:-moz-linear-gradient(top, #c62d1f 5%, #f24537 100%);
@@ -246,10 +286,46 @@ td {
 	background-color:#c62d1f;
 }
 
+/* From http://cssbuttoncreator.com/ */
+.styled-button2 {
+    background: #D0764F;
+    background-image: -webkit-linear-gradient(top, #D0764F, #D08255);
+    background-image: -moz-linear-gradient(top, #D0764F, #D08255);
+    background-image: -ms-linear-gradient(top, #D0764F, #D08255);
+    background-image: -o-linear-gradient(top, #D0764F, #D08255);
+    background-image: linear-gradient(to bottom, #D0764F, #D08255);
+    -webkit-border-radius: 7px;
+    -moz-border-radius: 7px;
+    border-radius: 7px;
+    height: 20px;
+    line-height: 20px;
+    color: #000000;
+    font-family: 'Open Sans', sans-serif;
+    margin: 2px;
+    width: 58px;
+    font-size: 14px;
+    font-weight: 400;
+    padding: 0px;
+    text-shadow: 1px 1px 20px #000000;
+    border: solid #000000 1px;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+ }
+ 
+ .styled-button2:hover {
+    background: #D0913E;
+    background-image: -webkit-linear-gradient(top, #D0913E, #D0AB47);
+    background-image: -moz-linear-gradient(top, #D0913E, #D0AB47);
+    background-image: -ms-linear-gradient(top, #D0913E, #D0AB47);
+    background-image: -o-linear-gradient(top, #D0913E, #D0AB47);
+    background-image: linear-gradient(to bottom, #D0913E, #D0AB47);
+    text-decoration: none;
+ }
 
 #addItemModal {
     text-align: center;
-    border: 1px solid black;
+    height: 300px;
     padding: 8px;
     display: visible;
 }
@@ -263,11 +339,11 @@ td {
 
 #mainView {
     display: visible;
+    padding: 0;
 }
 
 #changeGroupModal {
     text-align: center;
-    border: 1px solid black;
     height: 300px;
     display: none;
 }
@@ -286,7 +362,7 @@ td {
 }
 
 #generateGroupButton {
-    padding: 15px;
+    padding: 10px;
 }
 
 #validateAddItemDiv {
@@ -317,3 +393,19 @@ td {
     margin-top: 25px;
 }
 
+/*Some styling defaults*/
+.italic {
+    font-style: italic;
+}
+
+.underline {
+    text-decoration: underline;
+}
+
+.center {
+    text-align: center;
+}
+
+.bold {
+    font-weight: bold;
+}
