@@ -1,8 +1,6 @@
 var assert = require('assert');
 var clientFunction = require('../pub/client.js');
 
-
-
 describe('Can convert a string to be stored in a database', function () {
     it('should convert to lowercase (one word)', function () {
         assert.equal(clientFunction.cleanString('Oranges'), 'oranges');

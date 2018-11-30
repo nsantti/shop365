@@ -27,7 +27,7 @@
                     Shop 365
                 </div>
                 <div id="right-header">
-                    Date: <span id="date">No Date Available</span>
+                    Date:<br><span id="date">No Date Available</span>
                 </div>
             </div>
             <div id="item-form">
@@ -96,10 +96,8 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
-            
+            </div>            
         </div>
-
 
         <div id="addItemModal">
             <h1>Add Item</h1>
@@ -122,19 +120,14 @@
             <h1>Shop 365</h1>
             <label for="changeGroupText">Select Group Name:</label>
             <select id="groupSelector">
-               <!-- <option value="Test Group">Test Group</option> -->  
             </select>
-            <!--<input type="text" id="changeGroupText">-->
             <input type="submit" value="GO" id="createGroupButton">
             <div id="validateGroupDiv">
                 <br>
                 That group does not exist
             </div>
-            <!--<div id="generateGroup">
-                <button id="generateGroupButton" class="styledButton" type="button">Generate new group</button>
-            </div>-->
             <br>
-            <button id="generateGroupButton" class="styledButton" type="button">Generate new group</button>
+            <button id="generateGroupButton" class="styledButton" type="button">Create new group</button>
         </div>
 
         <div id="editItemModal">
@@ -167,9 +160,7 @@
             <br><br>
             <button id="cancelDeleteAllItemsButton">Cancel</button>
             <button id="confirmDeleteAllItemsButton">Yes</button>
-        </div>
-
-        
+        </div>        
 
         <div id="confirmDeleteGroupModal">
             Are you sure you want to delete the group: <span id="deleteGroupName"></span>?
@@ -179,19 +170,20 @@
         </div>
 
         <div id="createNewGroupModal">
-            Enter the group new name: <input type="text" name="newGroupName" id="createNewGroupInput">
+            Enter the new group name: <input type="text" name="newGroupName" id="createNewGroupInput">
             <br><br>
             <div id="validateNewGroupDiv">
                 Please enter a valid group name
             </div>
             <button id="cancelCreateNewGroupButton">Cancel</button>
-            <button id="confirmCreateNewGroupButton">Yes</button>
+            <button id="confirmCreateNewGroupButton">Ok</button>
         </div>
 
         <div id="groupDeletedModal">
             This group has been deleted
             <button id="groupWasDeleted">Ok</button>
         </div>
+        
     </div>
 </body>
 

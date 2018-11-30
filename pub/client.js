@@ -12,9 +12,6 @@ var purchasedCount = 0;
 
 socket.on("updateGroupList", function (groupArrayFromServer) {
     allGroups = groupArrayFromServer;
-    //console.log(groupArrayFromServer);
-    // console.log(allGroups);
-    //console.log(allGroups[0].groupid);
     $("#groupSelector").html("");
 
     if (allGroups.length != 0) {
@@ -47,23 +44,23 @@ var currentSort;
 function updateGUI(arr) {
     $("#table-body").html("");
     items = sortList(arr);
+
+    if (items.length == 0)
+        $("#table-body").append("<tr><td class='empty-table' colspan='5'>No Items in List</td></tr>")
+
     purchasedCount = 0;
     $("#content").height(400 + 53 * items.length);
-    for (i of items) {
-        let t = i;
+    for (let t of items) {
         var h = $("<tr id='" + t._id + "' class='table-item'><td></td><td class='" + t._id + "'>" + retrieve(t.name) + "</td><td class='" + t._id + "'>" + t.quantity + "</td><td class='" + t._id + "'>" + t.comments + "</td><td></td></tr>");
         var priorityButtonClass = t.priority ? 'truePriorityButton' : 'falsePriorityButton';
         var priorityText = t.priority ? "High" : "Low";
         var pb = $("<button class=" + priorityButtonClass + " type='button'>" + priorityText + "</button>");
-        var editb = $("<button class='edit-button' type='button'>Edit</button>");
-        var delb = $("<button class='delete-button' type='button'>Delete</button>");
-
+        var editb = $("<button class='styled-button2' type='button'>Edit</button>");
+        var delb = $("<button class='styled-button2' type='button'>Delete</button>");
 
         pb.click(function () {
             socket.emit("togglePriority", group, t._id, t.priority);
-            console.log(t.name + " " + t.priority);
         });
-
 
         $(h.children()[0]).append(pb);
         $(h.children()[4]).append(editb).append(delb);
@@ -81,28 +78,25 @@ function updateGUI(arr) {
 
         delb.click(function () {
             currentItem = t;
+            hideAll();
+            $("#confirmDeleteModal").show();
+            $("#deleteItemName").text(retrieve(currentItem.name));
         });
 
         $("#table-body").append(h);
 
         if (t.purchased == true) {
             purchasedCount++;
-            //console.log("Changing background color to gray");
             $("#" + t._id).css("background-color", "#7c7c7c");
         } else {
-            // console.log("Changing the background color to blue");
             $("#" + t._id).css("background-color", "#90AFC5");
         }
 
         $("." + t._id).click(function () {
-            //console.log("The item you are sending to the server is " + t.name + " and the purchased boolean is " + t.purchased);
-            console.log("Toggling purchased");
             socket.emit("togglePurchased", group, t._id, t.purchased);
         });
 
     }
-    console.log(purchasedCount);
-    //purchasedCount = 0;
     updateClickHandlers();
 }
 
@@ -110,8 +104,6 @@ socket.on("updateItemList", function (items) {
     $("#table-body").html("");
     $("#groupID").text(retrieve(group).toUpperCase());
     $("#date").text(makeDate());
-    console.log("Item array coming from server")
-    console.log(items);
     updateGUI(items);
 });
 
@@ -124,14 +116,7 @@ socket.on("forceOutOfList", function (w) {
     $("#groupDeletedModal").show();
 });
 
-//Nate
 function updateClickHandlers() {
-    $(".delete-button").click(function (event) {
-        hideAll();
-        $("#confirmDeleteModal").show();
-        $("#deleteItemName").text(retrieve(currentItem.name));
-    });
-
     $("#cancelDeleteItemButton").click(function () {
         hideAll();
         $("#mainView").show();
@@ -142,7 +127,7 @@ function updateClickHandlers() {
         $("#mainView").show();
         socket.emit("deleteItem", group, currentItem._id);
     });
-    //Nick added these
+
     $("#cancelDeleteAllItemsButton").click(function () {
         hideAll();
         $("#mainView").show();
@@ -162,6 +147,8 @@ function updateClickHandlers() {
     $("#confirmDeleteGroupButton").click(function () {
         socket.emit("deleteGroup", cleanString(group));
         hideAll();
+        group = "no_group_found";
+        socket.emit("changeRoom", group);
         $("#changeGroupModal").show();
     });
 
@@ -180,7 +167,6 @@ function updateClickHandlers() {
         hideAll();
         $("#changeGroupModal").show();
     });
-
 }
 
 function hideAll() {
@@ -207,7 +193,6 @@ function hideAllModals() {
     $("#mainView").hide();
 }
 
-//Nate
 function sortList(arr) {
     if (currentSort == sortingType.quantity) {
         console.log("SORTING BY QUANTITY");
@@ -225,17 +210,20 @@ function sortList(arr) {
             if (b.priority && !a.priority) return 1;
             return -1;
         })
+    } else {
+        arr = arr.sort(function (a, b) {
+            if (dateMillis(a.date) < dateMillis(b.date)) return 1;
+            return -1;
+        })
     }
     return arr;
 }
 
 function startItAll() {
 
-    // socket.emit("getGroups");
     socket.emit("getGroupCollections");
 
     if (typeof (group) === 'undefined') { //All items are loaded and then filtered when group is specified
-        //socket.emit("getAllItems");
         console.log("ERRORR ERRORR EORR")
     } else {
         socket.emit("getGroupItems", group);
@@ -297,9 +285,8 @@ function startItAll() {
                 $("#editModalItemComment").val(),
                 $("#editModalItemPriority").is(":checked")
             );
+            hideAll();
             $("#mainView").show();
-            $("#editItemModal").hide();
-            $("#validateEditItemDiv").hide();
             clearAllInputFields();
         }
     });
@@ -313,19 +300,12 @@ function startItAll() {
             group = cleanString(temp);
         }
         socket.emit("changeRoom", group);
-        //socket.emit("getGroupItems", group);
-        //TODO: handle the group value
         hideAll();
+        resetSort();
         $("#mainView").show();
     });
 
     $("#generateGroupButton").click(function () {
-        // group = prompt("Please enter a new group name");
-        // group = cleanString(group);
-        // //TODO: handle the group generation
-        // socket.emit("changeRoom", group);
-        // socket.emit("addNewGroup", group);
-        //socket.emit("getGroupItems", cleanString(group));
         hideAll();
         $("#createNewGroupModal").show();
         $("#createNewGroupInput").val('');
@@ -358,35 +338,50 @@ function startItAll() {
     });
 
     $("#removeAllButton").click(function () {
-        hideAll();
-        $("#confirmDeleteAllModal").show();
+        if (purchasedCount > 0) {
+            hideAll();
+            $("#confirmDeleteAllModal").show();
+        }
     });
 
-
     $("#table-quantity").click(function () {
-        currentSort = sortingType.quantity;
-        $("#table-name").css('background-color', '#90AFC5');
-        $("#table-priority").css('background-color', '#90AFC5');
-        $("#table-quantity").css('background-color', '#66a0c9');
+        if (currentSort === sortingType.quantity) {
+            resetSort();
+        } else {
+            currentSort = sortingType.quantity;
+            $("#table-name").css('background-color', '#90AFC5');
+            $("#table-priority").css('background-color', '#90AFC5');
+            $("#table-quantity").css('background-color', '#66a0c9');
+        }
         updateGUI(items);
     });
 
     $("#table-name").click(function () {
-        currentSort = sortingType.name;
-        $("#table-name").css('background-color', '#66a0c9');
-        $("#table-priority").css('background-color', '#90AFC5');
-        $("#table-quantity").css('background-color', '#90AFC5');
+        if (currentSort === sortingType.name) {
+            resetSort();
+        } else {
+            currentSort = sortingType.name;
+            $("#table-name").css('background-color', '#66a0c9');
+            $("#table-priority").css('background-color', '#90AFC5');
+            $("#table-quantity").css('background-color', '#90AFC5');
+        }
         updateGUI(items);
     });
 
     $("#table-priority").click(function () {
-        currentSort = sortingType.priority;
-        $("#table-name").css('background-color', '#90AFC5');
-        $("#table-priority").css('background-color', '#66a0c9');
-        $("#table-quantity").css('background-color', '#90AFC5');
+        if (currentSort === sortingType.priority) {
+            resetSort();
+        } else {
+            currentSort = sortingType.priority;
+            $("#table-name").css('background-color', '#90AFC5');
+            $("#table-priority").css('background-color', '#66a0c9');
+            $("#table-quantity").css('background-color', '#90AFC5');
+        }
         updateGUI(items);
     });
 }
+
+$(startItAll);
 
 function getModalItemPriority() {
     return $("#modalItemPriority").prop('checked');
@@ -399,15 +394,19 @@ function clearAllInputFields() {
     $("#modalItemPriority").prop('checked', false);
 }
 
-
-$(startItAll);
-
+function resetSort() {
+    currentSort = sortingType.none;
+    $("#table-name").css('background-color', '#90AFC5');
+    $("#table-priority").css('background-color', '#90AFC5');
+    $("#table-quantity").css('background-color', '#90AFC5');
+}
 
 function validateName(name) {
     return (name.replace(/\s/g, '').length > 0 && !isTooLong(name)); //Returns true if not empty string, not all whitespace, and is not too long
 }
 
 function validateGroupName(name) {
+    if (cleanString(name) == cleanString("No Group Found")) return false;
     if (includes(cleanString(name))) return false;
     return (name.replace(/\s/g, '').length > 0);
 }
@@ -421,14 +420,11 @@ function includes(name) {
 
 function validateQuantity(quantity) {
     let str = quantity.toString();
-    //console.log("STEP 1: " + str);
     let q = str.replace(/\s/g, '');
-    //console.log("STEP 2: " + q);
     if (q.length < 1 || q.length >= 15) return false;
     for (let i = 0; i < q.length; i++) {
         if (q[i] < '0' || q[i] > '9') return false;
     }
-    //console.log("STEP 3: " + parseInt(q));
     if (parseInt(q) < 1) return false;
     return true;
 }
@@ -480,7 +476,7 @@ function formatDate(date) {
 }
 
 function dateMillis(date) {
-    return date.getTime();
+    return new Date(date).getTime();
 }
 
 function fixComment(comment) {
@@ -488,7 +484,6 @@ function fixComment(comment) {
         return "";
     }
 }
-
 
 exports.cleanString = cleanString;
 exports.retrieve = retrieve;
