@@ -127,7 +127,6 @@ io.sockets.on("connection", function (socket) {
 		socket.leave(socket.room);
 		socket.room = newRoom;
 		socket.join(socket.room);
-		// clientGroup = newRoom;
 		sendItemListToClient();
 	});
 
