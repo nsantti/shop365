@@ -81,6 +81,9 @@ function updateGUI(arr) {
 
         delb.click(function () {
             currentItem = t;
+            hideAll();
+            $("#confirmDeleteModal").show();
+            $("#deleteItemName").text(retrieve(currentItem.name));
         });
 
         $("#table-body").append(h);
@@ -118,12 +121,6 @@ socket.on("forceOutOfList", function (w) {
 
 //Nate
 function updateClickHandlers() {
-    $(".delete-button").click(function (event) {
-        hideAll();
-        $("#confirmDeleteModal").show();
-        $("#deleteItemName").text(retrieve(currentItem.name));
-    });
-
     $("#cancelDeleteItemButton").click(function () {
         hideAll();
         $("#mainView").show();
