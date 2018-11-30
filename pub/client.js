@@ -42,6 +42,7 @@ var sortingType = {
 var currentSort;
 
 function updateGUI(arr) {
+    console.log(arr);
     $("#table-body").html("");
     items = sortList(arr);
 

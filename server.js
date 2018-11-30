@@ -26,6 +26,7 @@ io.sockets.on("connection", function (socket) {
 
 	socket.room = 'no_group_found';
 	socket.join('no_group_found');
+	console.log(io.sockets.adapter.rooms);
 
 	function sendGroupListToClient() {
 		db.listCollections().toArray(function (err, cols) {
@@ -139,6 +140,7 @@ io.sockets.on("connection", function (socket) {
 		socket.leave(socket.room);
 		socket.room = newRoom;
 		socket.join(socket.room);
+		console.log(io.sockets.adapter.rooms);
 		clientGroup = newRoom;
 		sendItemListToClient();
 	});
