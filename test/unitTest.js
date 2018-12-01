@@ -1,5 +1,5 @@
 var assert = require('assert');
-var clientFunction = require('../pub/client.js');
+var clientFunction = require('../pub/validate.js');
 
 describe('Can convert a string to be stored in a database', function () {
     it('should convert to lowercase (one word)', function () {
