@@ -127,6 +127,14 @@ io.sockets.on("connection", function (socket) {
 		console.log("Somebody disconnected.");
 	});
 
+	socket.on("leaveRoom", function() {
+		socket.leave(socket.room);
+		socket.room = 'no_group_found';
+		socket.join('no_group_found');
+		console.log(io.sockets.adapter.rooms);
+		console.log("");
+	})
+
 	socket.on("changeRoom", function (newRoom) {
 		socket.leave(socket.room);
 		socket.room = newRoom;
