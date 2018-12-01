@@ -162,11 +162,6 @@ function updateClickHandlers() {
         $("#confirmDeleteGroupModal").show();
     });
 
-    $("#cancelCreateNewGroupButton").click(function () {
-        hideAll();
-        $("#changeGroupModal").show();
-    });
-
     $("#groupWasDeleted").click(function () {
         hideAll();
         $("#changeGroupModal").show();
@@ -293,6 +288,11 @@ function startItAll() {
             $("#mainView").show();
             clearAllInputFields();
         }
+    });
+
+    $("#cancelCreateNewGroupButton").click(function () {
+        hideAll();
+        $("#changeGroupModal").show();
     });
 
     $("#createGroupButton").click(function () {
