@@ -22,8 +22,6 @@ app.use(express.static("pub"));
 io.sockets.on("connection", function (socket) {
 	console.log("Somebody connected...");
 
-	socket.room = 'no_group_found';
-	socket.join('no_group_found');
 	console.log(io.sockets.adapter.rooms);
 	console.log("");
 
@@ -129,8 +127,6 @@ io.sockets.on("connection", function (socket) {
 
 	socket.on("leaveRoom", function() {
 		socket.leave(socket.room);
-		socket.room = 'no_group_found';
-		socket.join('no_group_found');
 		console.log(io.sockets.adapter.rooms);
 		console.log("");
 	})

@@ -113,10 +113,10 @@ socket.on("forceClientCall", function (w) {
 });
 
 socket.on("forceOutOfList", function (w) {
+    group = "no_group_found";
+    socket.emit("leaveRoom");
     hideAll();
     $("#groupDeletedModal").show();
-    group = "no_group_found";
-    socket.emit("leaveGroup");
 });
 
 function updateClickHandlers() {
@@ -149,9 +149,10 @@ function updateClickHandlers() {
 
     $("#confirmDeleteGroupButton").click(function () {
         socket.emit("deleteGroup", cleanString(group));
+        socket.emit("leaveRoom");
+        //group = "no_group_found";
+        //socket.emit("changeRoom", group);
         hideAll();
-        group = "no_group_found";
-        socket.emit("changeRoom", group);
         $("#changeGroupModal").show();
     });
 
