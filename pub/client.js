@@ -42,7 +42,6 @@ var sortingType = {
 var currentSort;
 
 function updateGUI(arr) {
-    console.log(arr);
     $("#table-body").html("");
     items = sortList(arr);
 
@@ -113,10 +112,10 @@ socket.on("forceClientCall", function (w) {
 });
 
 socket.on("forceOutOfList", function (w) {
-    group = "no_group_found";
-    socket.emit("leaveRoom");
     hideAll();
     $("#groupDeletedModal").show();
+    group = 'no_group_found';
+    socket.emit("changeRoom", group);
 });
 
 function updateClickHandlers() {
@@ -149,10 +148,9 @@ function updateClickHandlers() {
 
     $("#confirmDeleteGroupButton").click(function () {
         socket.emit("deleteGroup", cleanString(group));
-        socket.emit("leaveRoom");
-        //group = "no_group_found";
-        //socket.emit("changeRoom", group);
         hideAll();
+        group = "no_group_found";
+        socket.emit("changeRoom", group);
         $("#changeGroupModal").show();
     });
 
@@ -160,6 +158,11 @@ function updateClickHandlers() {
         $("#deleteGroupName").text(retrieve(group));
         hideAll();
         $("#confirmDeleteGroupModal").show();
+    });
+
+    $("#cancelCreateNewGroupButton").click(function () {
+        hideAll();
+        $("#changeGroupModal").show();
     });
 
     $("#groupWasDeleted").click(function () {
@@ -194,7 +197,6 @@ function hideAllModals() {
 
 function sortList(arr) {
     if (currentSort == sortingType.quantity) {
-        console.log("SORTING BY QUANTITY");
         arr = arr.sort(function (a, b) {
             if (a.quantity < b.quantity) return 1;
             return -1;
@@ -290,11 +292,6 @@ function startItAll() {
         }
     });
 
-    $("#cancelCreateNewGroupButton").click(function () {
-        hideAll();
-        $("#changeGroupModal").show();
-    });
-
     $("#createGroupButton").click(function () {
         let temp = $("#groupSelector").val().toLowerCase();
         if (temp == '') {
@@ -330,7 +327,6 @@ function startItAll() {
     });
 
     $("#changeGroupButton").click(function () {
-        socket.emit("leaveRoom");
         socket.emit("getGroups");
         hideAll();
         $("#changeGroupModal").show();
