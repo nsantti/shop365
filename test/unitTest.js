@@ -47,7 +47,7 @@ describe('Can parse from database correctly', function () {
 
 describe('Can handle date formats correctly', function () {
     let aDate = new Date();
-    let dateString = (aDate.getMonth() + 1) + "-" + aDate.getDate() + "-" + aDate.getFullYear();
+    let dateString = (aDate.getMonth() + 1) + "-" + (aDate.getDate() < 10 ? '0' + aDate.getDate() : aDate.getDate()) + "-" + aDate.getFullYear();
     it('should work with today\s date', function () {
         assert.equal(clientFunction.makeDate(), dateString);
     });
